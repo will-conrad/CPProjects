@@ -1,9 +1,31 @@
+#ifdef _WIN32
+	#include<windows.h>
+#else
+	#include<unistd.h>
+#endif
+
 #include<iostream>
-#include <unistd.h>
+
 using namespace std;
 
+string checkOS() {
+	string os;
+	#ifdef _WIN32 // Includes both 32 bit and 64 bit
+		os = "Win";
+	#else 
+	    os = "Mac";
+	#endif
+	return os;
+}
+
+
 void clear() {
-	system("clear");
+	if (checkOS() == "Win") {
+		system("CLS");
+	}
+	else {
+		system("clear");
+	}
 }
 
 int calibrate() {
@@ -15,6 +37,7 @@ int calibrate() {
 	while(!atEnd) {
 		clear();
 		cout << "a: -5\ns: -1\nd: +1\nf: +5\nw: Input width\ne: Confirm"<<endl;
+		cout << width <<endl;
 		for (int n = 1; n <= width; n++) {
 			cout << "~";
 		}
@@ -48,7 +71,7 @@ int calibrate() {
 
 int randNum() {
 	int out;
-	out = rand() %10;
+	out = rand() %2;
 	return out;
 }
 
@@ -86,7 +109,12 @@ int printer() {
 		}
 		
 		cout <<endl;
-		usleep(60000);
+		if (checkOS() == "Win") {
+			Sleep(60);
+		}
+		else {
+			//usleep(60000);
+		}
 	}
 	return 0;
 }
