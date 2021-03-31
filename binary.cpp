@@ -110,10 +110,10 @@ int printer() {
 		
 		cout <<endl;
 		if (checkOS() == "Win") {
-			Sleep(60);
+			//Sleep(60);
 		}
 		else {
-			//usleep(60000);
+			usleep(60000);
 		}
 	}
 	return 0;
