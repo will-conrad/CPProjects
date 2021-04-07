@@ -70,7 +70,7 @@ int main() {
 				cout << "Thanks for using our calculator!" << endl;
 				break;
 			default: //Default/Error case
-				//refresh(A, B);
+				refresh(A, B);
 				cout << "Not a valid choice!" << endl;
 				break;
 		}
