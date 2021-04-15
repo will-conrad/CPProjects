@@ -17,7 +17,17 @@ cout << "The second grade is " << grades[1] << endl;
 //returns: "The second grade is 85"
 ====================
 
-cout << "The grades for the last quarter were " << endl;
+cout << "The grades from the last quarter were " << endl;
+for (int i = 0; i < 5; i++) {
+	cout << grades[i] << ", ";
+}
+//Returns: 
+The grades from the last quarter were 79, 85, 94, 80, 100, 
+
+====================
+
+int finalGrade
+
 
 
 
