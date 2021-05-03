@@ -1,4 +1,6 @@
 #include<iostream>
+#include <stdlib.h>
+#include <time.h>
 using namespace std;
 
 #define enter cout<<endl;
@@ -16,21 +18,32 @@ bool yahtzee(int a[]);
 
 
 int main() {
-	int dice[5];
-	roll(dice);
-	
-	int sorted[5] = {dice[0], dice[1], dice[2], dice[3], dice[4]};
-	sort(sorted);
+	bool end = false;
+	while (!end) {
+		int dice[5];
+		roll(dice);
+		
+		int sorted[5] = {dice[0], dice[1], dice[2], dice[3], dice[4]};
+		sort(sorted);
 
-	for(int i = 0; i < 5; i++) {
-		cout << dice[i] << endl; // output them unsorted
+		for(int i = 0; i < 5; i++) {
+			cout << dice[i] << endl; // output them unsorted
+		}
+		enter;
+		for(int i = 0; i < 5; i++) {
+			cout << sorted[i] << endl; // output them unsorted
+		}
+		
+		if (smStraight(sorted)) {
+			if (lgStraight(sorted)) {
+				cout << "lgstraight" <<endl;
+				end = true;
+			}
+			else {
+				cout << "smstraight" <<endl;
+			}
+		}
 	}
-	enter;
-	for(int i = 0; i < 5; i++) {
-		cout << sorted[i] << endl; // output them unsorted
-	}
-
-	cout << smStraight(sorted) <<endl;
 
 	
 	return 0;
@@ -64,40 +77,66 @@ bool fullHouse(int a[]) {
 }
 */
 bool smStraight(int a[]) {
-	bool x = false;
+	bool x = true;
+	int y = 0;
 	int i = 0;
 	do {
-		cout << "index" << i <<endl;
-		if (a[i] == 1 && i < 2) { //1 in index 0 or 1
-			if (a[i] == a[i+1]) {
-				x = true;
-			}
-			else {
-				x = false;
-			}
-		}
-		else if (a[i] == 2 && i < 2) { //2  in index 0 or 1
-			if (a[i] == a[i+1]) {
-				x = true;
-			}
-			else {
-				x = false;
-			}
+		if (a[i] == a[i+1] - 1 && i < 5) {
+			cout << "i is " << i <<endl;
+			i++;
+			y++;
+			x = true;
+		
 		}
 		else {
-			return false;
+			if (i != 0) {
+				x = false;
+			}
+			i++;
 		}
-		i++;
 	}
-	while (x == true && i != 4);
-	return x;
+	while (x == true); 
+	
+	cout << y+1 << endl;
+	if (y >= 3) {
+		return true;
+	}
+	else {
+		return false;
+	}
 
 }
-/*
+
 bool lgStraight(int a[]) {
-
+	bool x = true;
+	int y = 0;
+	int i = 0;
+	do {
+		if (a[i] == a[i+1] - 1 && i < 5) {
+			cout << "i is " << i <<endl;
+			i++;
+			y++;
+			x = true;
+		
+		}
+		else {
+			if (i != 0) {
+				x = false;
+			}
+			i++;
+		}
+	}
+	while (x == true); 
+	
+	cout << y+1 << endl;
+	if (y >= 4) {
+		return true;
+	}
+	else {
+		return false;
+	}
 }
-*/
+
 bool yahtzee(int a[]) {
 	if (a[0] == a[4]) {
 		return true;
