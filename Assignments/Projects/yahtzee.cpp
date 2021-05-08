@@ -30,7 +30,7 @@ void printYahtzee(); //Prints yahtzee banner
 bool forceZero = false; //Keeps track of whether player must enter 0 in available score area because no valid plays are possible after 3 rolls.
 bool canOnes = false, canTwos = false, canThrees = false, canFours = false, canFives = false, canSixes = false, canSmStraight = false, canLgStraight = false, canThreeOfAKind = false, canFourOfAKind = false, canFullHouse = false, canYahtzee = false, canChance = false; //keeps track of legality of moves
 bool usedOnes = false, usedTwos = false, usedThrees = false, usedFours = false, usedFives = false, usedSixes = false, usedSmStraight = false, usedLgStraight = false, usedThreeOfAKind = false, usedFourOfAKind = false, usedFullHouse = false, usedYahtzee = false, usedChance = false;
-int scoreOnes, scoreTwos, scoreThrees, scoreFours, scoreFives, scoreSixes, scoreSmStraight, scoreLgStraight, scoreThreeOfAKind, scoreFourOfAKind, scoreFullHouse, scoreYahtzee, bonusYahtzee = 0, scoreChance;
+int scoreOnes, scoreTwos, scoreThrees, scoreFours, scoreFives, scoreSixes, scoreSmStraight, scoreLgStraight, scoreThreeOfAKind, scoreFourOfAKind, scoreFullHouse, scoreYahtzee, bonusYahtzee, scoreChance;
 //Quantity of each number die
 int ones, twos, threes, fours, fives, sixes;
 int possible = 0, available = 0;
@@ -52,9 +52,9 @@ int main() {
 	bool keptDice[5] = {false, false, false, false, false}; //Keeps track of which dice to reroll
 	
 	clear;
-	printYahtzee(); //Print Yahtzee banner 1 time
+	printYahtzee();
 	enter;
-	
+
 	while(playsUsed < 13) { //13 possible plays, so code looped 13 times
 		//Set variable defaults each round
 		loopCatch = 1;
@@ -67,7 +67,7 @@ int main() {
 			//Reset keptDice to all false (keep no dice) so all dice get rerolled
 			keptDice[n] = false;
 		}
-
+		
 		roll(dice, keptDice); //Call roll function and pass dice[] & keptDice[]
 		sort(dice); //Sort dice array
 		
@@ -103,6 +103,8 @@ int main() {
 			cin>>charIn; //Cin used to detect enter key + character input
 			//Reprint screen elements
 			clear;
+			printYahtzee();
+			enter;
 			printDice(dice);
 			enter;
 			printPossible(possibleArr, availableArr);
@@ -138,6 +140,7 @@ int main() {
 					//Reroll and sort
 					roll(dice, keptDice);
 					sort(dice);
+					checkPossible(dice); //Check plays from new dice
 				}
 				else if (rerollDice > 5 || rerollDice < 1) { //Catch invalid numbers and give the Reroll-Dice-While loop another chance without rerolling
 					rollsLeft++; //ignore invalid input and give user another chance
@@ -155,13 +158,15 @@ int main() {
 					//Reroll and sort
 					roll(dice, keptDice);
 					sort(dice);
+					checkPossible(dice); //Check plays from new dice
 				}
 				clear;
 				//Reprint
+				printYahtzee();
+				enter;
 				printDice(dice);
 				enter;
-				checkPossible(dice);
-				printPossible(possibleArr, availableArr);
+				printPossible(possibleArr, availableArr); 
 				enter;
 
 				rollsLeft--; //Count down rolls 
@@ -205,6 +210,8 @@ int main() {
 				*/  
 				case 1:
 					clear; //Clear screen
+					printYahtzee(); //Reprint yahtzee logo
+					enter; //Return
 					scoreOnes = ones; //scoreOnes = 1 * # of ones
 					cout << "You scored " << scoreOnes << " points for [Aces]" <<endl;
 					usedOnes = true; //Used Ones
@@ -212,13 +219,17 @@ int main() {
 					break;
 				case 2:
 					clear;
-					scoreTwos = 2 * twos; //scoreOnes = 2 * # of twos
+					printYahtzee();
+					enter;
+					scoreTwos = 2 * twos; //scoreTwos = 2 * # of twos
 					cout << "You scored " << scoreTwos << " points for [Twos]" <<endl;
 					usedTwos = true;
 					playsUsed++;
 					break;
 				case 3:
 					clear;
+					printYahtzee();
+					enter;
 					scoreThrees = 3 * threes;
 					cout << "You scored " << scoreThrees << " points for [Threes]" <<endl;
 					usedThrees = true;
@@ -226,6 +237,8 @@ int main() {
 					break;
 				case 4:
 					clear;
+					printYahtzee();
+					enter;
 					scoreFours = 4 * fours;
 					cout << "You scored " << scoreFours << " points for [Fours]" <<endl;
 					usedFours = true;
@@ -233,6 +246,8 @@ int main() {
 					break;
 				case 5:
 					clear;
+					printYahtzee();
+					enter;
 					scoreFives = 5 * fives;
 					cout << "You scored " << scoreFives << " points for [Fives]" <<endl;
 					usedFives = true;
@@ -240,6 +255,8 @@ int main() {
 					break;
 				case 6:
 					clear;
+					printYahtzee();
+					enter;
 					scoreSixes = 6 * sixes;
 					cout << "You scored " << scoreSixes << " points for [Sixes]" <<endl;
 					usedSixes = true;
@@ -247,6 +264,8 @@ int main() {
 					break;
 				case 7:
 					clear;
+					printYahtzee();
+					enter;
 					scoreSmStraight = 30;
 					cout << "You scored 30 points for [Sm Straight]" <<endl;
 					usedSmStraight = true;
@@ -254,6 +273,8 @@ int main() {
 					break;
 				case 8:
 					clear;
+					printYahtzee();
+					enter;
 					scoreLgStraight = 40;
 					cout << "You scored 40 points for [Lg Straight]" <<endl;
 					usedLgStraight = true;
@@ -261,6 +282,8 @@ int main() {
 					break;
 				case 9:
 					clear;
+					printYahtzee();
+					enter;
 					scoreThreeOfAKind = dice[0] + dice[1] + dice[2] + dice[3] + dice[4]; //Dice total
 					cout << "You scored " << scoreThreeOfAKind << " points for [3 of a Kind]" <<endl;
 					usedThreeOfAKind = true;
@@ -268,6 +291,8 @@ int main() {
 					break;
 				case 10:
 					clear;
+					printYahtzee();
+					enter;
 					scoreFourOfAKind = dice[0] + dice[1] + dice[2] + dice[3] + dice[4];
 					cout << "You scored " << scoreFourOfAKind << " points for [4 of a Kind]" <<endl;
 					usedFourOfAKind = true;
@@ -275,6 +300,8 @@ int main() {
 					break;
 				case 11:
 					clear;
+					printYahtzee();
+					enter;
 					scoreFullHouse = 25;
 					cout << "You scored 25 points for [Full House]" <<endl;
 					usedFullHouse = true;
@@ -282,6 +309,8 @@ int main() {
 					break;
 				case 12:
 					clear;
+					printYahtzee();
+					enter;
 					if (usedYahtzee == true && scoreYahtzee != 0) { //If user already scored a Yahtzee, increase yahtzee bonus
 						bonusYahtzee = bonusYahtzee + 100;
 						cout << "You scored a 100 point Yahtzee Bonus" <<endl;
@@ -295,6 +324,8 @@ int main() {
 					break;
 				case 13:
 					clear;
+					printYahtzee();
+					enter;
 					scoreChance = dice[0] + dice[1] + dice[2] + dice[3] + dice[4]; //Dice total
 					cout << "You scored "<< scoreChance <<" points for [Chance]" <<endl;
 					usedChance = true;
@@ -463,8 +494,8 @@ void printScore() {
 	cout<< "Fours: " << scoreFours <<endl;
 	cout<< "Fives: " << scoreFives <<endl;
 	cout<< "Sixes: " << scoreSixes <<endl;
-	cout<< "UPPER SCORE: " << upperTotal << endl;
 	upperScore = scoreOnes + scoreTwos + scoreThrees + scoreFours + scoreFives + scoreSixes;
+	cout<< "UPPER SCORE: " << upperScore << endl;
 	if (upperScore > 63) { //Add 35 bonus points if upper section total > 63 
 		bonus = 35;
 	}
@@ -541,8 +572,8 @@ void checkPossible(int dice[]) {
 		canFullHouse = true;
 		possible++;
 	}
-	if (yahtzee(dice) && scoreYahtzee != 0) { //Dont check if already scored yahtzee because user can score a bonus for scoring 2+ yahtzees
-		canYahtzee = true; //^ check if scoreYahtzee has already been set to zero (currently not defined intentionally, so equal to random memory value)
+	if (yahtzee(dice) && !(scoreYahtzee == 0 && usedYahtzee == true)) { //Dont check if already scored yahtzee because user can score a bonus for scoring 2+ yahtzees
+		canYahtzee = true; //^ check if scoreYahtzee has already been set to zero 
 		possible++;
 	}
 	if (usedChance == false) { //Chance is always legal (dice total)
