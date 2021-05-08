@@ -1,184 +1,383 @@
 #include<iostream>
 #include<ctime>
 using namespace std;
+//From now on, "play" means a play that a user could make depending on their dice roll (Fours, Straight, three of a kind, yahtzee)
+//"Possible plays" are plays that a user could legally make with their dice roll AND could legally score because they havn't already scored it
+//"Available plays" are plays not yet scored that a user must score if they can't score any other plays with the dice they have (The zero rule)
 
-#define enter cout<<endl;
-#define clear system("clear");
+//ALL RULES of Yahtzee have been implemented from https://www.hasbro.com/common/instruct/Yahtzee.pdf WITH THE EXCEPTION OF the Joker Rules
 
-void play();
-void roll(int a[], bool keep[]);
-void sort(int a[]);
-void printDice(int a[]);
-void checkPossible(int dice[], int a[]);
-void printPossible(int p[], int a[]);
+//Custom formatting commands for convenience 
+#define enter cout<<endl; //New line
+#define clear system("clear"); //Clear screen
+
+//Function prototypes
+void roll(int a[], bool keep[]); //Dice rolling
+void sort(int a[]); //Insertion sorting
+void printDice(int a[]); //Prints dice in nice boxes
+void printScore(); //Prints game score
+void checkPossible(int dice[]); //Checks possible plays and available arrays if no legal plays are left
+void printPossible(int p[], int a[]); //Prints numbered list of possible plays and creates corrosponding array
 bool threeOfAKind();
 bool fourOfAKind();
 bool fullHouse(int a[]);
-bool smStraight(int a[]);
-bool lgStraight(int a[]);
-bool yahtzee(int a[]);
-void printYahtzee();
+bool smStraight(int a[]); //Small straight
+bool lgStraight(int a[]); //Large straight
+bool yahtzee(int a[]); 
+void printYahtzee(); //Prints yahtzee banner
 
-bool gameOver = false, forceZero = false;
+//Globals
+bool forceZero = false; //Keeps track of whether player must enter 0 in available score area because no valid plays are possible after 3 rolls.
 bool canOnes = false, canTwos = false, canThrees = false, canFours = false, canFives = false, canSixes = false, canSmStraight = false, canLgStraight = false, canThreeOfAKind = false, canFourOfAKind = false, canFullHouse = false, canYahtzee = false, canChance = false;
 bool usedOnes = false, usedTwos = false, usedThrees = false, usedFours = false, usedFives = false, usedSixes = false, usedSmStraight = false, usedLgStraight = false, usedThreeOfAKind = false, usedFourOfAKind = false, usedFullHouse = false, usedYahtzee = false, usedChance = false;
-int scoreOnes, scoreTwos, scoreThrees, scoreFours, scoreFives, scoreSixes, scoreSmStraight, scoreLgStraight, scoreThreeOfAKind, scoreFourOfAKindm, scoreFullHouse, scoreYahtzee, scoreChance;
+int scoreOnes, scoreTwos, scoreThrees, scoreFours, scoreFives, scoreSixes, scoreSmStraight, scoreLgStraight, scoreThreeOfAKind, scoreFourOfAKind, scoreFullHouse, scoreYahtzee, bonusYahtzee = 0, scoreChance;
+//Quantity of each number die
 int ones, twos, threes, fours, fives, sixes;
 int possible = 0, available = 0;
+//Possible: Number of legal plays based on dice roll
+//Available: Number of plays not already used to score
 
 int main() {
-	clear;
-	printYahtzee();
-	bool playAgain = true;
-	char reroll = 'n';
-	int play = 0;
-	int rollsLeft = 3;
-	int rerollDice;
-	bool keptDice[5] = {false, false, false, false, false}; //false to allow dice to be set for the first time
-	int dice[5];
-	int plays[13] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-	int availableArr[13] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-	//while play again
+	int playsUsed = 0; //Number of plays
+	int loopCatch = 0; //Entering a char into a cin expecting an int results in an endless loop. loopCatch catches endless loops and ends the program
+	bool proceed = true; //Main valid input boolean
+	char charIn = '.'; //Main char input
+	int intIn = 0; //Main int input
+	int play = 0; //User inputted chosen play
+	int rollsLeft = 3; //Keeps tract
+	int rerollDice; //Number of dice to be rerolled
+	int dice[5]; //Dice array
+	int possibleArr[13] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; //Corosponds user input list with play-ID
+	int availableArr[13] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; //Corosponds user input list with play-ID
+	bool keptDice[5] = {false, false, false, false, false}; //Keeps track of which dice to reroll
 	
-	while(gameOver == false) {
-		for (int n = 0; n < 5; n++) {
-			keptDice[n] = false; //throw away all dice
-		}
-		roll(dice, keptDice);
-		for (int n = 0; n < 5; n++) {
-			keptDice[n] = true; //Keep all dice
-		}
-		sort(dice);
-		
-		printDice(dice);
-		checkPossible(dice, availableArr);
-
-		printPossible(plays, availableArr);
-		
-		enter;
-		
+	clear;
+	printYahtzee(); //Print Yahtzee banner 1 time
+	enter;
+	
+	while(playsUsed < 13) { //13 possible plays, so code looped 13 times
+		//Set variable defaults each round
+		loopCatch = 1;
+		proceed = false;
 		rollsLeft = 3;
-		do {
-			do {
-				cout << "Reroll? (y/n): ";
-				cin >> reroll;
-			}
-			while (reroll != 'y' && reroll != 'n');
-			if (reroll == 'y') {
-				cout << "How many would you like to reroll?: ";
-				cin >> rerollDice;
-				int x = 0;
-				if (rerollDice == 5) {
-					for (int n = 0; n < 5; n++) {
-						keptDice[n] = false; //throw away all dice
-					}
-				}
-				else {
-					for (int i = 0; i < rerollDice; i++) {
-						cout << "Enter the die positions that you want to reroll (1,2,3,4,5): ";
-						cin >> x;
-						keptDice[x-1] = false;
-					}
-				}
-				for (int n = 0; n < 5; n++) {
-					if (keptDice[n] == true) {
-						cout << "keep ";
-					}
-					else {
-						cout << "no keep ";
-					}
-				}
-				enter;
-				roll(dice, keptDice);
-				sort(dice);
-				clear;
-				printDice(dice);
-				checkPossible(dice, availableArr);
-				printPossible(plays, availableArr);
+		intIn = 0;
+		charIn = 'x';
+		
+		for (int n = 0; n < 5; n++) {
+			//Reset keptDice to all false (keep no dice) so all dice get rerolled
+			keptDice[n] = false;
+		}
 
-				rollsLeft--;
+		roll(dice, keptDice); //Call roll function and pass dice[] & keptDice[]
+		sort(dice); //Sort dice array
+		
+		printDice(dice); //Output dice array
+		enter;
+		checkPossible(dice); //Checks all possible valid plays 
+		printPossible(possibleArr, availableArr); //Prints possible/available plays in numbered list
+		enter;
+		do {
+			cout << "Print score? (y/n): ";
+			cin >> charIn; //cin --> generic char variable for all char inputs
+			if (charIn != 'y' && charIn != 'n') { //User input must be 'y' or 'n'
+				proceed = false;
 			}
-			else {
-				rollsLeft = 1;
+			else { //User enters letter other than y or n
+				proceed = true;
+			}
+			loopCatch++; //Increment loopCatch to detect endless loops
+			if (loopCatch > 20) { //if loopCatch gets too high, end program
+				enter;
+				clear;
+				cout << "INPUT ERROR" <<endl;
+				return 0;
 			}
 		}
-		while (rollsLeft != 1);
-		
-		
+		while (!proceed ); //Ask until user inputs valid answer
 
-		//----------------------------
-		do {
+		if (charIn == 'y') { //User inputs 'y'
+			printScore();
+			enter;
+
+			cout << "[Input any character to continue]"; //Equivalent of "press any button to continue"
+			cin>>charIn; //Cin used to detect enter key + character input
+			//Reprint screen elements
 			clear;
 			printDice(dice);
-			printPossible(plays, availableArr);
 			enter;
+			printPossible(possibleArr, availableArr);
+			enter;
+		}
+		do { // --- Reroll dice loop --- //
+			do { //Ask for input
+				cout << "Reroll? (y/n): ";
+				cin >> charIn;
+				if (charIn != 'y' && charIn != 'n') { //User input must be 'y' or 'n'
+					proceed = false;
+				}
+				else {
+					proceed = true;
+				}
+				loopCatch++;
+				if (loopCatch > 20) {
+					enter;
+					clear;
+					cout << "INPUT ERROR" <<endl;
+					return 0;
+				}
+			}
+			while (!proceed); //Ask until user inputs valid answer
+
+			if (charIn == 'y') { //User wishes to reroll
+				cout << "How many would you like to reroll?: ";
+				cin >> rerollDice; //Get # of dice to reroll
+				if (rerollDice == 5) { //If rerollDice=5, skip dice selection and tell keptDice[] to reroll everything
+					for (int n = 0; n < 5; n++) {
+						keptDice[n] = false; //Set keptDice[] all to false
+					}
+					//Reroll and sort
+					roll(dice, keptDice);
+					sort(dice);
+				}
+				else if (rerollDice > 5 || rerollDice < 1) { //Catch invalid numbers and give the Reroll-Dice-While loop another chance without rerolling
+					rollsLeft++; //ignore invalid input and give user another chance
+				}
+				else { //User enters # between 1 and 4
+					for (int n = 0; n < 5; n++) {
+						keptDice[n] = true; //tell keptDice[] to keep everything, then it which ones not to keep
+					}
+					for (int i = 0; i < rerollDice; i++) { //Loop for every dice user wants to reroll (rerollDice)
+						cout << "Enter the die positions that you want to reroll (1,2,3,4,5): ";
+						cin >> intIn; //Cin --> generic integer variable for all integer inputs
+
+						keptDice[intIn-1] = false; //Set keptDice index to user input -1 so "1" becomes index "0"
+					}
+					//Reroll and sort
+					roll(dice, keptDice);
+					sort(dice);
+				}
+				clear;
+				//Reprint
+				printDice(dice);
+				enter;
+				checkPossible(dice);
+				printPossible(possibleArr, availableArr);
+				enter;
+
+				rollsLeft--; //Count down rolls 
+			}
+			else { //User inputs 'n'
+				rollsLeft = 1; //Count off remaining rolls to end loop
+			}
+		}
+		while (rollsLeft != 1); //Until user runs out of rolls
+		//----------------------------
+		do {
 			cout << "What would you like to do? (Enter number next to available play): ";
 			cin >> play;
-			play--;
-			switch(plays[play]) { //multiplication param times 0 for 0 score * 0
+			//Using possible + available because only one will have a value (the number of valid plays to choose from) so any input above either is invalid
+			if (play > (possible + available) || play < 1) { //Also catches inputs < 0
+				proceed = false;
+			}
+			else {
+				proceed = true;
+			}
+			loopCatch++;
+			if (loopCatch > 20) {
+				enter;
+				clear;
+				cout << "INPUT ERROR" <<endl;
+				return 0;
+			}
+		}
+		while (!proceed);
+		play--; //Subtracts 1 from user input so when 1 is inputted, index 0 is fetched
+		if (forceZero == false) { //If user has a valid play and said valid play has not been used yet
+			switch(possibleArr[play]) { //All of this index stuff is explained in printPossible()
 				case 1:
+					clear;
 					scoreOnes = ones;
+					cout << "You scored " << scoreOnes << " points for [Ones]" <<endl;
 					usedOnes = true;
+					playsUsed++;
 					break;
 				case 2:
+					clear;
 					scoreTwos = 2 * twos;
+					cout << "You scored " << scoreTwos << " points for [Twos]" <<endl;
 					usedTwos = true;
+					playsUsed++;
 					break;
 				case 3:
+					clear;
 					scoreThrees = 3 * threes;
+					cout << "You scored " << scoreThrees << " points for [Threes]" <<endl;
 					usedThrees = true;
+					playsUsed++;
 					break;
 				case 4:
+					clear;
 					scoreFours = 4 * fours;
+					cout << "You scored " << scoreFours << " points for [Fours]" <<endl;
 					usedFours = true;
+					playsUsed++;
 					break;
 				case 5:
+					clear;
 					scoreFives = 5 * fives;
+					cout << "You scored " << scoreFives << " points for [Fives]" <<endl;
 					usedFives = true;
+					playsUsed++;
 					break;
 				case 6:
+					clear;
 					scoreSixes = 6 * sixes;
+					cout << "You scored " << scoreSixes << " points for [Sixes]" <<endl;
 					usedSixes = true;
+					playsUsed++;
 					break;
 				case 7:
+					clear;
 					scoreSmStraight = 30;
+					cout << "You scored 30 points for [Sm Straight]" <<endl;
 					usedSmStraight = true;
+					playsUsed++;
 					break;
 				case 8:
+					clear;
 					scoreLgStraight = 40;
+					cout << "You scored 40 points for [Lg Straight]" <<endl;
 					usedLgStraight = true;
+					playsUsed++;
 					break;
 				case 9:
+					clear;
 					scoreThreeOfAKind = dice[0] + dice[1] + dice[2] + dice[3] + dice[4];
+					cout << "You scored " << scoreThreeOfAKind << " points for [3 of a Kind]" <<endl;
 					usedThreeOfAKind = true;
+					playsUsed++;
 					break;
 				case 10:
-					scoreFourOfAKindm = dice[0] + dice[1] + dice[2] + dice[3] + dice[4];
+					clear;
+					scoreFourOfAKind = dice[0] + dice[1] + dice[2] + dice[3] + dice[4];
+					cout << "You scored " << scoreFourOfAKind << " points for [4 of a Kind]" <<endl;
 					usedFourOfAKind = true;
+					playsUsed++;
 					break;
 				case 11:
+					clear;
 					scoreFullHouse = 25;
+					cout << "You scored 25 points for [Full House]" <<endl;
 					usedFullHouse = true;
+					playsUsed++;
 					break;
 				case 12:
-					scoreYahtzee = 50;
-					usedYahtzee = true;
+					clear;
+					if (usedYahtzee == true && scoreYahtzee != 0) {
+						bonusYahtzee = bonusYahtzee + 100;
+						cout << "You scored a 100 point Yahtzee Bonus" <<endl;
+					}
+					else if (usedYahtzee == false) {
+						scoreYahtzee = 50;
+						cout << "You scored 50 points for [Yahtzee]" <<endl;
+						usedYahtzee = true;
+						playsUsed++;
+					}
 					break;
 				case 13:
+					clear;
 					scoreChance = dice[0] + dice[1] + dice[2] + dice[3] + dice[4];
+					cout << "You scored "<< scoreChance <<" points for [Chance]" <<endl;
 					usedChance = true;
+					playsUsed++;
 					break;
 				default:
-					cout << "ERROR" <<endl;
+					cout << "Please enter a valid number" <<endl;
+					enter;
 					break;
 			}
 		}
-		while ((play + 1) < 1 || (play + 1) > 13);
-		clear;
+		else {
+			switch(availableArr[play]) { 
+				case 1:
+					scoreOnes = 0;
+					usedOnes = true;
+					playsUsed++;
+					break;
+				case 2:
+					scoreTwos = 0;
+					usedTwos = true;
+					playsUsed++;
+					break;
+				case 3:
+					scoreThrees = 0;
+					usedThrees = true;
+					playsUsed++;
+					break;
+				case 4:
+					scoreFours = 0;
+					usedFours = true;
+					playsUsed++;
+					break;
+				case 5:
+					scoreFives = 0;
+					usedFives = true;
+					playsUsed++;
+					break;
+				case 6:
+					scoreSixes = 0;
+					usedSixes = true;
+					playsUsed++;
+					break;
+				case 7:
+					scoreSmStraight = 0;
+					usedSmStraight = true;
+					playsUsed++;
+					break;
+				case 8:
+					scoreLgStraight = 0;
+					usedLgStraight = true;
+					playsUsed++;
+					break;
+				case 9:
+					scoreThreeOfAKind = 0;
+					usedThreeOfAKind = true;
+					playsUsed++;
+					break;
+				case 10:
+					scoreFourOfAKind = 0;
+					usedFourOfAKind = true;
+					playsUsed++;
+					break;
+				case 11:
+					scoreFullHouse = 0;
+					usedFullHouse = true;
+					playsUsed++;
+					break;
+				case 12:
+					scoreYahtzee = 0;
+					usedYahtzee = true;
+					playsUsed++;
+					break;
+				case 13:
+					scoreChance = 0;
+					usedChance = true;
+					playsUsed++;
+					break;
+				default:
+					cout << "Please enter a valid number" <<endl;
+					enter;
+					break;
+			}
+			clear;
+		}
 	}
+	clear;
+	printScore();
+	enter;
+	cout << "Thanks for playing!" <<endl;
 	return 0;
 }
-
 void roll(int a[], bool keep[]) {
 	srand(time(NULL));
 	for(int i = 0; i < 5; i++) {
@@ -236,7 +435,50 @@ void printDice(int a[]) {
 	┗━━━┻━━━┻━━━┻━━━┻━━━┛
 	*/
 }
-void checkPossible(int dice[], int a[]) {
+void printScore() {
+	int upperScore, lowerScore;
+	int bonus = 0;
+	int upperTotal = 0;
+	
+	clear;
+	cout<< "[UPPER SECTION]" <<endl;
+	cout<< "Aces: " << scoreOnes <<endl;
+	cout<< "Twos: " << scoreTwos <<endl;
+	cout<< "Threes: " << scoreThrees <<endl;
+	cout<< "Fours: " << scoreFours <<endl;
+	cout<< "Fives: " << scoreFives <<endl;
+	cout<< "Sixes: " << scoreSixes <<endl;
+	cout<< "UPPER SCORE: " << upperTotal << endl;
+	upperScore = scoreOnes + scoreTwos + scoreThrees + scoreFours + scoreFives + scoreSixes;
+	if (upperScore > 63) {
+		bonus = 35;
+	}
+	else {
+		bonus = 0;
+	}
+	upperTotal = upperScore + bonus;
+	cout<< "BONUS: " << bonus <<endl;
+	enter;
+	cout<< "UPPER SECTION TOTAL: " << upperTotal <<endl;
+	enter;
+	cout << "------------------------" <<endl;
+	enter;
+	cout<< "[LOWER SECTION]" <<endl;
+	cout<< "3 of a kind: "<< scoreThreeOfAKind <<endl;
+	cout<< "4 of a kind: "<< scoreFourOfAKind <<endl;
+	cout<< "Full House: "<< scoreFullHouse <<endl;
+	cout<< "Sm Straight: "<< scoreSmStraight <<endl;
+	cout<< "Lg Straight: "<< scoreLgStraight <<endl;
+	cout<< "YAHTZEE: "<< scoreYahtzee <<endl;
+	cout<< "Chance: "<< scoreChance <<endl;
+	cout<< "YAHTZEE BONUS: " << bonusYahtzee <<endl;
+	enter;
+	lowerScore = scoreThreeOfAKind + scoreFourOfAKind + scoreFullHouse + scoreSmStraight + scoreLgStraight + scoreYahtzee + bonusYahtzee + scoreChance;
+	cout<< "LOWER SECTION TOTAL: " << lowerScore << endl;
+	enter;
+	cout<< "GRAND TOTAL: " << upperTotal + lowerScore << endl;
+}
+void checkPossible(int dice[]) {
 	canOnes = false, canTwos = false, canThrees = false, canFours = false, canFives = false, canSixes = false, canSmStraight = false, canLgStraight = false, canThreeOfAKind = false, canFourOfAKind = false, canFullHouse = false, canYahtzee = false, canChance = false;
 	possible = 0;
 	if (ones > 0 && usedOnes == false) {
@@ -283,7 +525,7 @@ void checkPossible(int dice[], int a[]) {
 		canFullHouse = true;
 		possible++;
 	}
-	if (yahtzee(dice) && usedYahtzee == false) {
+	if (yahtzee(dice)) { //removed usedYahtzee == false condition
 		canYahtzee = true;
 		possible++;
 	}
@@ -292,7 +534,7 @@ void checkPossible(int dice[], int a[]) {
 		possible++;
 	}
 	//=============================================
-	if (possible == 0) { //Force 0
+	if (possible == 0) { //Force 0 rule
 		forceZero = true;
 		available = 0;
 		if (usedOnes == false) {
@@ -333,7 +575,8 @@ void checkPossible(int dice[], int a[]) {
 		}
 		
 		if (available == 0) {
-			gameOver = true;
+			
+			cout << "gameover" <<endl;
 		}
 	}
 	else {
@@ -341,12 +584,16 @@ void checkPossible(int dice[], int a[]) {
 	}
 }
 void printPossible(int p[], int a[]) {
+	for (int i = 0; i < 13; i++) {
+		p[i] = 0;
+		a[i] = 0;
+	}
 	int x = 1;
 	if (forceZero == false) {
 		cout << "Possible plays: " <<endl;
 	
 		if (canOnes) {
-			cout<< x << ". Ones"<<endl;
+			cout<< x << ". Aces"<<endl;
 			p[x-1] = 1;
 			x++;
 		}
@@ -414,7 +661,7 @@ void printPossible(int p[], int a[]) {
 	else {
 		cout << "Remaining unused plays: " <<endl;
 		if (usedOnes == false) {
-			cout<< x << ". Ones"<<endl;
+			cout<< x << ". Aces"<<endl;
 			a[x-1] = 1;
 			x++;
 		}
@@ -474,6 +721,7 @@ void printPossible(int p[], int a[]) {
 			x++;
 		}
 
+
 	}
 }
 bool smStraight(int a[]) {
@@ -483,6 +731,11 @@ bool smStraight(int a[]) {
 	do {
 		if (a[i] == a[i+1] - 1 && i < 5) {
 			i++;
+			y++;
+			x = true;
+		}
+		else if (a[i] == a[i+2] - 1 && i < 5) {
+			i = i + 2;
 			y++;
 			x = true;
 		}
@@ -508,6 +761,11 @@ bool lgStraight(int a[]) {
 	do {
 		if (a[i] == a[i+1] - 1 && i < 5) {
 			i++;
+			y++;
+			x = true;
+		}
+		else if (a[i] == a[i+2] - 1 && i < 5) {
+			i = i + 2;
 			y++;
 			x = true;
 		}
