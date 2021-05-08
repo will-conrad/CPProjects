@@ -2,9 +2,11 @@
 using namespace std;
 
 int main() {
-	int a;
-	a++;
-	cout << a <<endl;
+	bool x = true, y = true;
+	
+	if (x || y) {
+		cout << "yes " <<endl;
+			}
 	return 0;
 }
 
