@@ -2,8 +2,8 @@
 using namespace std;
 
 int main() {
-	int a = 0;
-	a--;
+	int a;
+	a++;
 	cout << a <<endl;
 	return 0;
 }

@@ -22,21 +22,18 @@ bool smStraight(int a[]) {
 	int y = 0;
 	int i = 0;
 	do {
-		if (a[i] == a[i+1] - 1 && i < 5) {
+		if (a[i] == a[i+1] - 1) {
 			i++;
 			y++;
 			x = true;
 		}
-		else if (a[i] == a[i+2] - 1 && i < 5) {
+		else if (a[i] == a[i+2] - 1) {
 			i = i + 2;
 			y++;
 			x = true;
 		}
 		else {
-			if (i != 0) {
-				x = false;
-			}
-			i++;
+			x = false;
 		}
 	}
 	while (x == true); 
