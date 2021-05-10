@@ -201,8 +201,8 @@ int main() {
 			switch(possibleArr[play]) { //All of this index stuff is explained in printPossible()
 				/*	possibleArr[] and availableArr[] are arrays representing the numbered list of valid choices presented to the user.
 					Attatched to the index corrosponding to a number on the list is an identifying number that corrosponds to the play it represents.
-					If the user chooses option 2 from the example list below, index 1 (Line 194, remember) is fetched. Waiting at index 1 is the number 12 which represents
-					yahtzee. 12 is placed into this switch(possibleArr[play]) and 
+					If the user chooses option 2 from the example list below, index 1 (play--) is fetched. Waiting at index 1 is the number 12 which represents
+					yahtzee. 12 is placed into this switch(possibleArr[play]) and checked. 
 
 					1. Twos
 					2. Yahtzee
@@ -410,6 +410,8 @@ int main() {
 					break;
 			}
 			clear;
+			printYahtzee();
+			enter;
 		}
 	}
 	//GAME OVER
@@ -528,6 +530,7 @@ void checkPossible(int dice[]) {
 	//Reset canVariables before rechecking everything
 	canOnes = false, canTwos = false, canThrees = false, canFours = false, canFives = false, canSixes = false, canSmStraight = false, canLgStraight = false, canThreeOfAKind = false, canFourOfAKind = false, canFullHouse = false, canYahtzee = false, canChance = false;
 	possible = 0; //Reset number of possible (legal) plays
+	available = 0; //Reset available counter
 	if (ones > 0 && usedOnes == false) { //If dice roll has ones and user hasnt scored Ones, play is legal
 		canOnes = true; //Set canOnes to true;
 		possible++; //Increment possible count
@@ -583,7 +586,6 @@ void checkPossible(int dice[]) {
 	//=============================================
 	if (possible == 0) { //All previous if statements DID NOT RUN possible was never incremented which means 
 		forceZero = true; //Forcing user to score 0 for some remaining play
-		available = 0; //Reset available counter
 		if (usedOnes == false) {
 			available++;
 		}
@@ -689,7 +691,7 @@ void printPossible(int p[], int a[]) { //Accepts possibleArr[] and availableArr[
 			x++;
 		}
 		if (canYahtzee) {
-			cout<< x << ". Yahtzee (50pts"<<endl;
+			cout<< x << ". Yahtzee (50pts)"<<endl;
 			p[x-1] = 12; //Yahtzee ID = 12
 			x++;
 		}
