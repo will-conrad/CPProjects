@@ -480,6 +480,11 @@ void printDice(int a[]) { //Accepts dice array
 	┃   ┃   ┃   ┃   ┃   ┃
 	┗━━━┻━━━┻━━━┻━━━┻━━━┛
 	*/
+	/*
+	━━━━━━━━━━━━━━━━━━━┓
+	 GRAND TOTAL: XXXX ┃
+	━━━━━━━━━━━━━━━━━━━┛
+	*/
 }
 void printScore() {
 	//Initialize some variables
