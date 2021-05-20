@@ -6,12 +6,8 @@ using namespace std;
 #define enter cout << endl;
 #define clear system("clear");
 
-const int WIDTH = 50;
-const int HEIGHT = 50;
-
-
-void fillArray(string a[][WIDTH]);
-void printArray(string a[][WIDTH]);
+const int WIDTH = 300;
+const int HEIGHT = 300;
 
 int main() {
 	int neighbors = 0;
@@ -45,14 +41,13 @@ int main() {
 				BE_MAT[h+1][w+1] = FE_MAT[h][w];
 			}
 		}
-		enter;
-		usleep(100000);
+		//usleep(100000);
 		clear;
 		//PRINT MAT
 		enter;
 		for (int h = 0; h < HEIGHT; h++)  {
 			for (int w = 0; w < WIDTH; w++) {
-				cout << FE_MAT[h][w];
+				cout << setw(2) << FE_MAT[h][w];
 			}
 			enter;
 		}
@@ -121,39 +116,5 @@ int main() {
 			}
 		}
 	}
-	/*for (int x = 0; x < h; x++) {
-		for (int y = 0; y < w; y++) {
-			if (rand()%5 == 1) {
-				cout << setw(2) << "██";
-			}
-			else {
-				cout << setw(2) << "  ";
-			}
-		}
-		cout << endl;
-	}*/
-	
 	return 0;
-}
-
-void fillArray(string a[][WIDTH]) {
-	srand(time(NULL));
-	for (int h = 0; h < HEIGHT; h++)  {
-		for (int w = 0; w < WIDTH; w++) {
-			if (rand()%10 == 1) {
-				a[h][w] = "██";
-			}
-			else {
-				a[h][w] = "  ";
-			}
-		}
-	}
-}
-void printArray(string a[][WIDTH]) {
-	for (int h = 0; h < HEIGHT; h++)  {
-		for (int w = 0; w < WIDTH; w++) {
-			cout << a[h][w];
-		}
-		enter;
-	}
 }
