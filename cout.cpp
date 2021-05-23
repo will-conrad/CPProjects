@@ -1,27 +1,21 @@
-#include<iostream>
-#include<cmath>
-#include<iomanip>
+#include <iostream> 
+//#include <stdio.h>  
+using namespace std;  
 
-using namespace std;
-
-int main() {
-	int w = 60;
-	int h = 50;
-	srand(time(NULL));
-	for (int x = 0; x < h; x++) {
-		for (int y = 0; y < w; y++) {
-			if (rand()%5 == 1) {
-				cout << setw(2) << "██";
-			}
-			else {
-				cout << setw(2) << "  ";
-			}
-		}
-		cout << endl;
+int main() { 
+	//https://stackoverflow.com/a/912184
+    system("stty raw");
+    int x = 0;
+    char input;
+	do {
+		input = getchar();
+		cout << (int)input;
 	}
-	//█ █ █ █
+	while (input != 'z');
 	
-	return  0;
 
+
+	
+	system("stty cooked");
+    return 0; 
 }
-
