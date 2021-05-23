@@ -11,30 +11,28 @@ int keyIn();
 const int WIDTH = 20;
 const int HEIGHT = 20;
 
+//Colors: https://stackoverflow.com/a/2616912
+//Char In: https://stackoverflow.com/a/912184
 
 int main() {
 	cout << "\033[0m\033[0m";
+	string tile = "▞▞";
 	int key;
 	char charIn;
 	int neighbors = 0;
 	bool alive = false;
-	int bgBlankColor = 30;
-	//int bgUnderCursorColor = 
-	//int selectedColor = 
-	//int selectedUnderCursorColor = 
+	bool unique = false;
 
 	int cursorX = 0;
 	int cursorY = 0;
 
 	string FE_MAT[HEIGHT][WIDTH]; //Front End Matrix
-	bool BOOL_MAT[HEIGHT][WIDTH]; //Boolean Matrix
 	string BE_MAT[HEIGHT + 2][WIDTH + 2]; //Back End Matrix
 
 	for (int h = 0; h < HEIGHT + 2; h++) {
 		for (int w = 0; w < WIDTH + 2; w++) {
 			BE_MAT[h][w] = "  ";
 			if (h < HEIGHT && w < WIDTH) {
-				BOOL_MAT[h][w] = false;
 				FE_MAT[h][w] = "  ";
 			}
 		}
@@ -56,24 +54,34 @@ int main() {
 	if (charIn == 'y') {
 		do {
 			clear;
-			for (int h = 0; h < HEIGHT; h++) {
-				for (int w = 0; w < WIDTH; w++) {
-					if (BOOL_MAT[h][w] == false && (cursorX != w || cursorY != h)) { //Dead, No cur
-						//cout << "\033[30m██\033[0m";
-						cout << "  ";
+			for (int h = 0; h < HEIGHT + 1; h++) {
+				for (int w = 0; w < WIDTH + 1; w++) {
+					if (h < HEIGHT && w < WIDTH) {
+						if (FE_MAT[h][w] == "  " && (cursorX != w || cursorY != h)) { //Dead, No cur
+							//cout << "\033[30m██\033[0m";
+							cout << "  ";
+						}
+						else if (FE_MAT[h][w] == "  " && (cursorX == w && cursorY == h)) { //Dead, cur
+							//cout << "\033[34;1;40m▞▞\033[0m";
+							cout << "\033[1;36m▞▞\033[0m";
+						}
+						else if (FE_MAT[h][w] == tile && (cursorX != w || cursorY != h)) { //Alive, No cur
+							//cout << "██";
+							cout << "\033[37;47m"<<tile<<"\033[0m";
+
+						}
+						else if (FE_MAT[h][w] == tile && (cursorX == w && cursorY == h)) { //Alive, cur
+							cout << "\033[7;46;37m▞▞\033[0m";
+						}
+						else {
+							//return 0;
+						}
 					}
-					else if (BOOL_MAT[h][w] == false && (cursorX == w && cursorY == h)) { //Dead, cur
-						//cout << "\033[34;1;40m▞▞\033[0m";
-						cout << "\033[34m▞▞\033[0m";
+					else if (h == HEIGHT && w < WIDTH) {
+						cout << "══";
 					}
-					else if (BOOL_MAT[h][w] == true && (cursorX != w || cursorY != h)) { //Alive, No cur
-						cout << "██";
-					}
-					else if (BOOL_MAT[h][w] == true && (cursorX == w && cursorY == h)) { //Alive, cur
-						cout << "\033[7;1;44m▞▞\033[0m";
-					}
-					else {
-						return 0;
+					else if (w == WIDTH && h < HEIGHT) {
+						cout << "║";
 					}
 				}
 				enter;
@@ -101,28 +109,25 @@ int main() {
 					}
 					break;
 				case 5:
-					BOOL_MAT[cursorY][cursorX] = !BOOL_MAT[cursorY][cursorX];
+					if (FE_MAT[cursorY][cursorX] == tile) {
+						FE_MAT[cursorY][cursorX] = "  ";
+					}
+					else {
+						FE_MAT[cursorY][cursorX] = tile;
+					}
 					break;
 				default:
 					break;
 			}
 		} 
 		while (key != 6);
-		
-		for (int h = 0; h < HEIGHT; h++)  {
-			for (int w = 0; w < WIDTH; w++) {
-				if (BOOL_MAT[h][w] == true) {
-					FE_MAT[h][w] = "██";
-				}
-			}
-		}
 	}
 	else {
 		srand(time(NULL));
 		for (int h = 0; h < HEIGHT; h++)  {
 			for (int w = 0; w < WIDTH; w++) {
-				if (rand()%7 == 1) {
-					FE_MAT[h][w] = "██";
+				if (rand()%5 == 1) {
+					FE_MAT[h][w] = tile;
 				}
 				else {
 					FE_MAT[h][w] = "  ";
@@ -145,11 +150,20 @@ int main() {
 	do {
 		
 		clear;
+		unique = false;
 		//SET BACKEND TO SAME AS FRONT END
 		for (int h = 0; h < HEIGHT; h++)  {
 			for (int w = 0; w < WIDTH; w++) {
+				if (BE_MAT[h+1][w+1] != FE_MAT[h][w]) {
+					unique = true;
+				}
 				BE_MAT[h+1][w+1] = FE_MAT[h][w];
-				cout << FE_MAT[h][w];
+				if (FE_MAT[h][w] != "  ") {
+					cout << "\033[37;47m" << FE_MAT[h][w] << "\033[0m";
+				}
+				else {
+					cout << "  ";
+				}
 				/*
 				if (FE_MAT[h][w] == "██") {
 					cout << FE_MAT[h][w];
@@ -162,7 +176,10 @@ int main() {
 			}
 			enter;
 		}
-		usleep(8000);
+		if (!unique) {
+			return 0;
+		}
+		usleep(50000);
 		
 		/*
 		for (int h = 0; h < HEIGHT; h++)  {
@@ -182,31 +199,31 @@ int main() {
 			for (int w = 1; w < WIDTH + 2; w++) {
 				neighbors = 0;
 				alive = false;
-				if (BE_MAT[h][w] == "██") {
+				if (BE_MAT[h][w] == tile) {
 					alive = true;
 				}
-				if (BE_MAT[h-1][w-1] == "██") {
+				if (BE_MAT[h-1][w-1] == tile) {
 					neighbors++;
 				}
-				if (BE_MAT[h-1][w] == "██") {
+				if (BE_MAT[h-1][w] == tile) {
 					neighbors++;
 				}
-				if (BE_MAT[h-1][w+1] == "██") {
+				if (BE_MAT[h-1][w+1] == tile) {
 					neighbors++;
 				}
-				if (BE_MAT[h][w-1] == "██") {
+				if (BE_MAT[h][w-1] == tile) {
 					neighbors++;
 				}
-				if (BE_MAT[h][w+1] == "██") {
+				if (BE_MAT[h][w+1] == tile) {
 					neighbors++;
 				}
-				if (BE_MAT[h+1][w-1] == "██") {
+				if (BE_MAT[h+1][w-1] == tile) {
 					neighbors++;
 				}
-				if (BE_MAT[h+1][w] == "██") {
+				if (BE_MAT[h+1][w] == tile) {
 					neighbors++;
 				}
-				if (BE_MAT[h+1][w+1] == "██") {
+				if (BE_MAT[h+1][w+1] == tile) {
 					neighbors++;
 				}
 				if (h < HEIGHT + 1 && w < WIDTH + 1) {
@@ -220,7 +237,7 @@ int main() {
 					}
 					else {
 						if (neighbors == 3) {
-							FE_MAT[h-1][w-1] = "██";
+							FE_MAT[h-1][w-1] = tile;
 						}
 					}
 				}
@@ -244,18 +261,12 @@ int main() {
 
 			}
 		}
-
-		system("stty raw");
-		//charIn = getchar();
-		key = (int)charIn;
-		system("stty cooked"); 
 	}
-	while(key != 9);
+	while(true);
 	return 0;
 }
 
 int keyIn() {
-	//https://stackoverflow.com/a/912184
 	char input;
 	system("stty raw"); 
 	input = getchar();
