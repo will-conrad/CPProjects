@@ -24,9 +24,8 @@ bool fullHouse(int a[]); //Check full house
 bool smStraight(int a[]); //Small straight
 bool lgStraight(int a[]); //Large straight
 bool yahtzee(int a[]); //Check 5 of a kind (yahtzee)
-void printYahtzee(); //Prints yahtzee banner
-
-//Globals
+void printYahtzee(); //Prints yahtzee banner 
+==
 bool forceZero = false; //Keeps track of whether player must enter 0 in available score area because no valid plays are possible after 3 rolls.
 bool canOnes = false, canTwos = false, canThrees = false, canFours = false, canFives = false, canSixes = false, canSmStraight = false, canLgStraight = false, canThreeOfAKind = false, canFourOfAKind = false, canFullHouse = false, canYahtzee = false, canChance = false; //keeps track of legality of moves
 bool usedOnes = false, usedTwos = false, usedThrees = false, usedFours = false, usedFives = false, usedSixes = false, usedSmStraight = false, usedLgStraight = false, usedThreeOfAKind = false, usedFourOfAKind = false, usedFullHouse = false, usedYahtzee = false, usedChance = false;
@@ -737,7 +736,7 @@ void printPossible(int p[], int a[]) { //Accepts possibleArr[] and availableArr[
 			cout<< x << ". Sixes"<<endl;
 			a[x-1] = 6;
 			x++;
-		}
+		}!
 		if (usedSmStraight == false) {
 			cout<< x << ". Small straight"<<endl;
 			a[x-1] = 7;
@@ -848,6 +847,7 @@ bool threeOfAKind() {
 	}
 	else {
 		return false;
+		
 	}
 }
 bool fourOfAKind() {

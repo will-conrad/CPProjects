@@ -9,10 +9,7 @@ using namespace std;
 
 const int WIDTH = 20;
 const int HEIGHT = 20;
-
-//string tile = "▞▞";
-string tile = "██";
-
+const string tile = "██";
 
 void glider1(string a[][WIDTH], int w, int h);
 void glider2(string a[][WIDTH], int w, int h);
@@ -23,14 +20,15 @@ void galaxy(string a[][WIDTH], int w, int h);
 
 int main() {
 	int cursorColor = 2;
+
 	int key = -1;
 	char charIn;
 	int neighbors = 0;
 	bool alive = false;
 	bool stable = true;
 	bool edit, progress, advance;
-	int cursorX = WIDTH/2;
-	int cursorY = HEIGHT/2;
+	int cursorX = (WIDTH/2) -1;
+	int cursorY = (HEIGHT/2) -1;
 
 	string FE_MAT[HEIGHT][WIDTH]; //Front End Matrix
 	string BE_MAT[HEIGHT + 2][WIDTH + 2]; //Back End Matrix
@@ -67,7 +65,6 @@ int main() {
 							}
 							else if (FE_MAT[h][w] == tile && (cursorX != w || cursorY != h)) { //Alive, No cur
 								cout << "\033[37;47m  \033[0m";
-
 							}
 							else if (FE_MAT[h][w] == tile && (cursorX == w && cursorY == h)) { //Alive, cur
 								cout << "\033[7;4"<<cursorColor<<";37m▞▞\033[0m";
@@ -85,11 +82,15 @@ int main() {
 					}
 					enter;
 				}
-				cout << "Use the Arrow Keys to move the cursor" << endl;
+				cout << "(" << cursorX << "," << cursorY << ")" << endl;
+				enter;
+				cout << "\033[4mUse the Arrow Keys to move the cursor\033[0m" << endl;
 				cout << "Press Space to toggle a block" << endl;
-				cout << "Press 1 or 2 to add a glider" << endl;
+				cout << "Press 1 or 2 to add a glider, or press 3 to add a galaxy" << endl;
+				cout << "Press 3 to add a galaxy" << endl;
 				cout << "Press C to clear" << endl;
-				cout << "Press E to exit" << endl;
+				enter;
+				cout << "\033[1mPress E to exit\033[0m" << endl;
 				
 				system("stty raw"); 
 				charIn = getchar();
@@ -283,7 +284,6 @@ int main() {
 					else {
 						cout << "  ";
 					}
-
 				}
 				enter;
 			}
@@ -292,7 +292,7 @@ int main() {
 			}
 			cout << "Hold Space to advance" <<endl;
 			cout << "Press E to edit" <<endl;
-			cout << "Press Tab to stop" <<endl;
+			cout << "Press Tab to quit" <<endl;
 			do {
 				advance = false;
 				
@@ -315,11 +315,8 @@ int main() {
 			while (advance == false);
 		}
 		while(edit == false && key != 9);
-		
-		cout << "break" <<endl;
 	}
 	while(key != 9);
-
 	return 0;
 }
 
@@ -362,7 +359,6 @@ void galaxy(string a[][WIDTH], int w, int h) {
 		a[h-4][w+1] = tile;
 		a[h-4][w+3] = tile;
 		a[h-4][w+4] = tile;
-
 		a[h-3][w-4] = tile;
 		a[h-3][w-3] = tile;
 		a[h-3][w-2] = tile;
@@ -371,28 +367,22 @@ void galaxy(string a[][WIDTH], int w, int h) {
 		a[h-3][w+1] = tile;
 		a[h-3][w+3] = tile;
 		a[h-3][w+4] = tile;
-
 		a[h-2][w+3] = tile;
 		a[h-2][w+4] = tile;
-
 		a[h-1][w-4] = tile;
 		a[h-1][w-3] = tile;
 		a[h-1][w+3] = tile;
 		a[h-1][w+4] = tile;
-
 		a[h][w-4] = tile;
 		a[h][w-3] = tile;
 		a[h][w+3] = tile;
 		a[h][w+4] = tile;
-
 		a[h+1][w-4] = tile;
 		a[h+1][w-3] = tile;
 		a[h+1][w+3] = tile;
 		a[h+1][w+4] = tile;
-
 		a[h+2][w-4] = tile;
 		a[h+2][w-3] = tile;
-
 		a[h+3][w-4] = tile;
 		a[h+3][w-3] = tile;
 		a[h+3][w-1] = tile;
@@ -401,7 +391,6 @@ void galaxy(string a[][WIDTH], int w, int h) {
 		a[h+3][w+2] = tile;
 		a[h+3][w+3] = tile;
 		a[h+3][w+4] = tile;
-
 		a[h+4][w-4] = tile;
 		a[h+4][w-3] = tile;
 		a[h+4][w-1] = tile;

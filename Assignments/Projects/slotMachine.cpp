@@ -1,5 +1,4 @@
 #include<iostream>
-
 using namespace std;
 
 //getEmoji(n) returns the correct emoji for the number passed to it.
