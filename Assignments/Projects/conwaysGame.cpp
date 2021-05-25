@@ -1,7 +1,7 @@
 #include<iostream>
 #include<iomanip>
 #include<unistd.h>
-#include <stdio.h>
+//#include<stdio.h>
 using namespace std;
 
 #define enter cout << endl;
@@ -319,7 +319,6 @@ int main() {
 	while(key != 9);
 	return 0;
 }
-
 void glider1(string a[][WIDTH], int w, int h) {
 	if (w < WIDTH - 1 && w > 0 && h < HEIGHT - 1 && h > 0) {
 		a[h-1][w] = tile;
@@ -348,7 +347,6 @@ void glider2(string a[][WIDTH], int w, int h) {
 		a[h+2][w] = tile;
 	}
 }
-
 void galaxy(string a[][WIDTH], int w, int h) {
 	if (w < WIDTH - 4 && w > 3 && h < HEIGHT - 4 && h > 3) {
 		a[h-4][w-4] = tile;
