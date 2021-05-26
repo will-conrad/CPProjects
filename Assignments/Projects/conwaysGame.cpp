@@ -8,15 +8,16 @@ using namespace std;
 
 const int WIDTH = 20;
 const int HEIGHT = 20;
-const string tile = "██";
+//const string tile = "██";
 
-void glider(string a[][WIDTH], int w, int h);
-void ship1(string a[][WIDTH], int w, int h);
-void ship2(string a[][WIDTH], int w, int h);
-void galaxy(string a[][WIDTH], int w, int h);
+void glider(bool a[][WIDTH], int w, int h);
+void ship1(bool a[][WIDTH], int w, int h);
+void ship2(bool a[][WIDTH], int w, int h);
+void galaxy(bool a[][WIDTH], int w, int h);
 
 //Colors: https://stackoverflow.com/a/2616912
 //Char In: https://stackoverflow.com/a/912184
+
 
 int main() {
 	int cursorColor = 2;
@@ -48,14 +49,14 @@ int main() {
 	}
 
 	if (wrapping == false) { //NO WRAPPING
-		string FE_MAT[HEIGHT][WIDTH]; //Front End Matrix
-		string BE_MAT[HEIGHT + 2][WIDTH + 2]; //Back End Matrix
+		bool FE_MAT[HEIGHT][WIDTH]; //Front End Matrix
+		bool BE_MAT[HEIGHT + 2][WIDTH + 2]; //Back End Matrix
 
 		for (int h = 0; h < HEIGHT + 2; h++) {
 			for (int w = 0; w < WIDTH + 2; w++) {
-				BE_MAT[h][w] = "  ";
+				BE_MAT[h][w] = false;
 				if (h < HEIGHT && w < WIDTH) {
-					FE_MAT[h][w] = "  ";
+					FE_MAT[h][w] = false;
 				}
 			}
 		}
@@ -67,17 +68,16 @@ int main() {
 					for (int h = 0; h < HEIGHT + 1; h++) {
 						for (int w = 0; w < WIDTH + 1; w++) {
 							if (h < HEIGHT && w < WIDTH) {
-								if (FE_MAT[h][w] == "  " && (cursorX != w || cursorY != h)) { //Dead, No cur
+								if (FE_MAT[h][w] == false && (cursorX != w || cursorY != h)) { //Dead, No cur
 									cout << "  ";
 								}
-								else if (FE_MAT[h][w] == "  " && (cursorX == w && cursorY == h)) { //Dead, cur
-									//cout << "\033[34;1;40m▞▞\033[0m";
+								else if (FE_MAT[h][w] == false && (cursorX == w && cursorY == h)) { //Dead, cur
 									cout << "\033[1;3"<<cursorColor<<"m▞▞\033[0m";
 								}
-								else if (FE_MAT[h][w] == tile && (cursorX != w || cursorY != h)) { //Alive, No cur
+								else if (FE_MAT[h][w] == true && (cursorX != w || cursorY != h)) { //Alive, No cur
 									cout << "\033[37;47m  \033[0m";
 								}
-								else if (FE_MAT[h][w] == tile && (cursorX == w && cursorY == h)) { //Alive, cur
+								else if (FE_MAT[h][w] == true && (cursorX == w && cursorY == h)) { //Alive, cur
 									cout << "\033[7;4"<<cursorColor<<";37m▞▞\033[0m";
 								}
 							}
@@ -114,7 +114,6 @@ int main() {
 							charIn = getchar();
 						}
 					}
-					
 					system("stty cooked"); 
 		
 					switch((int)charIn) {
@@ -154,17 +153,12 @@ int main() {
 							}
 							break;
 						case 32: //SPACE
-							if (FE_MAT[cursorY][cursorX] == tile) {
-								FE_MAT[cursorY][cursorX] = "  ";
-							}
-							else {
-								FE_MAT[cursorY][cursorX] = tile;
-							}
+							FE_MAT[cursorY][cursorX] = !FE_MAT[cursorY][cursorX];
 							break;
 						case 99: //C
 							for (int h = 0; h < HEIGHT; h++) {
 								for (int w = 0; w < WIDTH; w++) {
-									FE_MAT[h][w] = "  ";
+									FE_MAT[h][w] = false;
 								}
 							}
 							break;
@@ -191,10 +185,10 @@ int main() {
 				for (int h = 0; h < HEIGHT; h++)  {
 					for (int w = 0; w < WIDTH; w++) {
 						if (rand()%5 == 1) {
-							FE_MAT[h][w] = tile;
+							FE_MAT[h][w] = true;
 						}
 						else {
-							FE_MAT[h][w] = "  ";
+							FE_MAT[h][w] = false;
 						}
 					}
 				}
@@ -211,45 +205,45 @@ int main() {
 						neighbors = 0;
 						alive = false;
 						
-						if (BE_MAT[h][w] == tile) {
+						if (BE_MAT[h][w] == true) {
 							alive = true;
 						}
-						if (BE_MAT[h-1][w-1] == tile) {
+						if (BE_MAT[h-1][w-1] == true) {
 							neighbors++; //TL
 						}
-						if (BE_MAT[h-1][w] == tile) {
+						if (BE_MAT[h-1][w] == true) {
 							neighbors++; // T
 						}
-						if (BE_MAT[h-1][w+1] == tile) {
+						if (BE_MAT[h-1][w+1] == true) {
 							neighbors++; //TR
 						}
-						if (BE_MAT[h][w-1] == tile) {
+						if (BE_MAT[h][w-1] == true) {
 							neighbors++; //L
 						}
-						if (BE_MAT[h][w+1] == tile) {
+						if (BE_MAT[h][w+1] == true) {
 							neighbors++; //R
 						}
-						if (BE_MAT[h+1][w-1] == tile) {
+						if (BE_MAT[h+1][w-1] == true) {
 							neighbors++; //BL
 						}
-						if (BE_MAT[h+1][w] == tile) {
+						if (BE_MAT[h+1][w] == true) {
 							neighbors++; //B
 						}
-						if (BE_MAT[h+1][w+1] == tile) {
+						if (BE_MAT[h+1][w+1] == true) {
 							neighbors++; // BR
 						}
 						if (h < HEIGHT + 1 && w < WIDTH + 1) {
 							if (alive) {
 								if (neighbors < 2) {
-									FE_MAT[h-1][w-1] = "  ";
+									FE_MAT[h-1][w-1] = false;
 								}
 								else if (neighbors > 3) {
-									FE_MAT[h-1][w-1] = "  ";
+									FE_MAT[h-1][w-1] = false;
 								}
 							}
 							else {
 								if (neighbors == 3) {
-									FE_MAT[h-1][w-1] = tile;
+									FE_MAT[h-1][w-1] = true;
 								}
 							}
 						}
@@ -264,7 +258,7 @@ int main() {
 						if (BE_MAT[h+1][w+1] != FE_MAT[h][w]) {
 							stable = false;
 						}
-						if (FE_MAT[h][w] == tile) {
+						if (FE_MAT[h][w] == true) {
 							cout << "\033[37;47m  \033[0m";
 						}
 						else {
@@ -284,34 +278,34 @@ int main() {
 					
 					system("stty raw"); 
 					charIn = getchar();
-					key = (int)charIn;
+					//key = (int)charIn;
 					system("stty cooked");
 
-					if (key == 101) {
+					if ((int)charIn == 101) {
 						edit = true;
 						advance = true;
 					}
-					else if (key == 32) {
+					else if ((int)charIn == 32) {
 						advance = true;
 					}
-					else if (key == 9) {
+					else if ((int)charIn == 9) {
 						advance = true;
 					}
 				}
 				while (advance == false);
 			}
-			while(edit == false && key != 9);
+			while(edit == false && (int)charIn != 9);
 		}
-		while(key != 9);
+		while((int)charIn != 9);
 	}
 	else { //WRAPPING
-		string FE_MAT[HEIGHT][WIDTH]; //Front End Matrix
-		string BE_MAT[HEIGHT][WIDTH]; //Back End Matrix
+		bool FE_MAT[HEIGHT][WIDTH]; //Front End Matrix
+		bool BE_MAT[HEIGHT][WIDTH]; //Back End Matrix
 
 		for (int h = 0; h < HEIGHT; h++) {
 			for (int w = 0; w < WIDTH; w++) {
-				BE_MAT[h][w] = "  ";
-				FE_MAT[h][w] = "  ";
+				BE_MAT[h][w] = false;
+				FE_MAT[h][w] = false;
 			}
 		}
 
@@ -322,17 +316,16 @@ int main() {
 					for (int h = 0; h < HEIGHT + 1; h++) {
 						for (int w = 0; w < WIDTH + 1; w++) {
 							if (h < HEIGHT && w < WIDTH) {
-								if (FE_MAT[h][w] == "  " && (cursorX != w || cursorY != h)) { //Dead, No cur
+								if (FE_MAT[h][w] == false && (cursorX != w || cursorY != h)) { //Dead, No cursor
 									cout << "  ";
 								}
-								else if (FE_MAT[h][w] == "  " && (cursorX == w && cursorY == h)) { //Dead, cur
-									//cout << "\033[34;1;40m▞▞\033[0m";
+								else if (FE_MAT[h][w] == false && (cursorX == w && cursorY == h)) { //Dead, cursor
 									cout << "\033[1;3"<<cursorColor<<"m▞▞\033[0m";
 								}
-								else if (FE_MAT[h][w] == tile && (cursorX != w || cursorY != h)) { //Alive, No cur
+								else if (FE_MAT[h][w] == true && (cursorX != w || cursorY != h)) { //Alive, No cursor
 									cout << "\033[37;47m  \033[0m";
 								}
-								else if (FE_MAT[h][w] == tile && (cursorX == w && cursorY == h)) { //Alive, cur
+								else if (FE_MAT[h][w] == true && (cursorX == w && cursorY == h)) { //Alive, cursor
 									cout << "\033[7;4"<<cursorColor<<";37m▞▞\033[0m";
 								}
 							}
@@ -409,17 +402,12 @@ int main() {
 							}
 							break;
 						case 32: //SPACE
-							if (FE_MAT[cursorY][cursorX] == tile) {
-								FE_MAT[cursorY][cursorX] = "  ";
-							}
-							else {
-								FE_MAT[cursorY][cursorX] = tile;
-							}
+							FE_MAT[cursorY][cursorX] = !FE_MAT[cursorY][cursorX];
 							break;
 						case 99: //C
 							for (int h = 0; h < HEIGHT; h++) {
 								for (int w = 0; w < WIDTH; w++) {
-									FE_MAT[h][w] = "  ";
+									FE_MAT[h][w] = false;
 								}
 							}
 							break;
@@ -446,10 +434,10 @@ int main() {
 				for (int h = 0; h < HEIGHT; h++)  {
 					for (int w = 0; w < WIDTH; w++) {
 						if (rand()%5 == 1) {
-							FE_MAT[h][w] = tile;
+							FE_MAT[h][w] = true;
 						}
 						else {
-							FE_MAT[h][w] = "  ";
+							FE_MAT[h][w] = false;
 						}
 					}
 				}
@@ -467,10 +455,9 @@ int main() {
 						alive = false;
 						corner = 0;
 						edge = 0;
-						if (BE_MAT[h][w] == tile) {
+						if (BE_MAT[h][w] == true) {
 							alive = true;
 						}
-
 						if (h == 0 && w == WIDTH-1) {
 							corner = 1;
 						}
@@ -483,7 +470,7 @@ int main() {
 						else if (w == 0 && h == 0) {
 							corner = 4;
 						}
-						
+						//Check if current 
 						else if (h == 0) {
 							edge = 1; //Top edge
 						}
@@ -501,106 +488,106 @@ int main() {
 						if (corner > 0) {
 							switch(corner) {
 								case 1:
-									if (BE_MAT[HEIGHT-1][WIDTH-2] == tile) {
+									if (BE_MAT[HEIGHT-1][WIDTH-2] == true) {
 										neighbors++; //TL
 									}
-									if (BE_MAT[HEIGHT-1][WIDTH-1] == tile) {
+									if (BE_MAT[HEIGHT-1][WIDTH-1] == true) {
 										neighbors++; // T
 									}
-									if (BE_MAT[HEIGHT-1][0] == tile) {
+									if (BE_MAT[HEIGHT-1][0] == true) {
 										neighbors++; //TR
 									}
-									if (BE_MAT[0][WIDTH-2] == tile) {
+									if (BE_MAT[0][WIDTH-2] == true) {
 										neighbors++; //L
 									}
-									if (BE_MAT[0][0] == tile) {
+									if (BE_MAT[0][0] == true) {
 										neighbors++; //R
 									}
-									if (BE_MAT[1][WIDTH-2] == tile) {
+									if (BE_MAT[1][WIDTH-2] == true) {
 										neighbors++; //BL
 									}
-									if (BE_MAT[1][WIDTH-1] == tile) {
+									if (BE_MAT[1][WIDTH-1] == true) {
 										neighbors++; //B
 									}
-									if (BE_MAT[1][0] == tile) {
+									if (BE_MAT[1][0] == true) {
 										neighbors++; // BR
 									}
 									break;
 								case 2:
-									if (BE_MAT[HEIGHT-2][WIDTH-2] == tile) {
+									if (BE_MAT[HEIGHT-2][WIDTH-2] == true) {
 										neighbors++; //TL
 									}
-									if (BE_MAT[HEIGHT-2][WIDTH-1] == tile) {
+									if (BE_MAT[HEIGHT-2][WIDTH-1] == true) {
 										neighbors++; // T
 									}
-									if (BE_MAT[HEIGHT-2][0] == tile) {
+									if (BE_MAT[HEIGHT-2][0] == true) {
 										neighbors++; //TR
 									}
-									if (BE_MAT[HEIGHT-1][WIDTH-2] == tile) {
+									if (BE_MAT[HEIGHT-1][WIDTH-2] == true) {
 										neighbors++; //L
 									}
-									if (BE_MAT[HEIGHT-1][0] == tile) {
+									if (BE_MAT[HEIGHT-1][0] == true) {
 										neighbors++; //R
 									}
-									if (BE_MAT[0][WIDTH-2] == tile) {
+									if (BE_MAT[0][WIDTH-2] == true) {
 										neighbors++; //BL
 									}
-									if (BE_MAT[0][WIDTH-1] == tile) {
+									if (BE_MAT[0][WIDTH-1] == true) {
 										neighbors++; //B
 									}
-									if (BE_MAT[0][0] == tile) {
+									if (BE_MAT[0][0] == true) {
 										neighbors++; // BR
 									}
 									break;
 								case 3:
-									if (BE_MAT[HEIGHT-2][WIDTH-1] == tile) {
+									if (BE_MAT[HEIGHT-2][WIDTH-1] == true) {
 										neighbors++; //TL
 									}
-									if (BE_MAT[HEIGHT-2][0] == tile) {
+									if (BE_MAT[HEIGHT-2][0] == true) {
 										neighbors++; // T
 									}
-									if (BE_MAT[HEIGHT-2][1] == tile) {
+									if (BE_MAT[HEIGHT-2][1] == true) {
 										neighbors++; //TR
 									}
-									if (BE_MAT[HEIGHT-1][WIDTH-1] == tile) {
+									if (BE_MAT[HEIGHT-1][WIDTH-1] == true) {
 										neighbors++; //L
 									}
-									if (BE_MAT[HEIGHT-1][1] == tile) {
+									if (BE_MAT[HEIGHT-1][1] == true) {
 										neighbors++; //R
 									}
-									if (BE_MAT[0][WIDTH-1] == tile) {
+									if (BE_MAT[0][WIDTH-1] == true) {
 										neighbors++; //BL
 									}
-									if (BE_MAT[0][0] == tile) {
+									if (BE_MAT[0][0] == true) {
 										neighbors++; //B
 									}
-									if (BE_MAT[0][1] == tile) {
+									if (BE_MAT[0][1] == true) {
 										neighbors++; // BR
 									}
 									break;
 								case 4:
-									if (BE_MAT[HEIGHT-1][WIDTH-1] == tile) { //Check BR Corner
+									if (BE_MAT[HEIGHT-1][WIDTH-1] == true) { //Check BR Corner
 										neighbors++; //TL
 									}
-									if (BE_MAT[HEIGHT-1][0] == tile) {
+									if (BE_MAT[HEIGHT-1][0] == true) {
 										neighbors++; // T
 									}
-									if (BE_MAT[HEIGHT-1][1] == tile) {
+									if (BE_MAT[HEIGHT-1][1] == true) {
 										neighbors++; //TR
 									}
-									if (BE_MAT[0][WIDTH-1] == tile) {
+									if (BE_MAT[0][WIDTH-1] == true) {
 										neighbors++; //L
 									}
-									if (BE_MAT[0][1] == tile) {
+									if (BE_MAT[0][1] == true) {
 										neighbors++; //R
 									}
-									if (BE_MAT[1][WIDTH-1] == tile) {
+									if (BE_MAT[1][WIDTH-1] == true) {
 										neighbors++; //BL
 									}
-									if (BE_MAT[1][0] == tile) {
+									if (BE_MAT[1][0] == true) {
 										neighbors++; //B
 									}
-									if (BE_MAT[h+1][w+1] == tile) {
+									if (BE_MAT[h+1][w+1] == true) {
 										neighbors++; // BR
 									}
 									break;
@@ -610,154 +597,150 @@ int main() {
 							switch(edge) {
 								case 1:
 									
-									if (BE_MAT[HEIGHT-1][w-1] == tile) {
+									if (BE_MAT[HEIGHT-1][w-1] == true) {
 										neighbors++; //TL
 									}
-									if (BE_MAT[HEIGHT-1][w] == tile) {
+									if (BE_MAT[HEIGHT-1][w] == true) {
 										neighbors++; // T
 									}
-									if (BE_MAT[HEIGHT-1][w+1] == tile) {
+									if (BE_MAT[HEIGHT-1][w+1] == true) {
 										neighbors++; //TR
 									}
 
 
-									if (BE_MAT[h][w-1] == tile) {
+									if (BE_MAT[h][w-1] == true) {
 										neighbors++; //L
 									}
-									if (BE_MAT[h][w+1] == tile) {
+									if (BE_MAT[h][w+1] == true) {
 										neighbors++; //R
 									}
-									if (BE_MAT[h+1][w-1] == tile) {
+									if (BE_MAT[h+1][w-1] == true) {
 										neighbors++; //BL
 									}
-									if (BE_MAT[h+1][w] == tile) {
+									if (BE_MAT[h+1][w] == true) {
 										neighbors++; //B
 									}
-									if (BE_MAT[h+1][w+1] == tile) {
+									if (BE_MAT[h+1][w+1] == true) {
 										neighbors++; // BR
 									}
 									break;
 								case 2:
-									if (BE_MAT[h-1][w-1] == tile) {
+									if (BE_MAT[h-1][w-1] == true) {
 										neighbors++; //TL
 									}
-									if (BE_MAT[h-1][w] == tile) {
+									if (BE_MAT[h-1][w] == true) {
 										neighbors++; // T
 									}
-									if (BE_MAT[h-1][0] == tile) {
+									if (BE_MAT[h-1][0] == true) {
 										neighbors++; //TR
 									}
-									if (BE_MAT[h][w-1] == tile) {
+									if (BE_MAT[h][w-1] == true) {
 										neighbors++; //L
 									}
-									if (BE_MAT[h][0] == tile) {
+									if (BE_MAT[h][0] == true) {
 										neighbors++; //R
 									}
-									if (BE_MAT[h+1][w-1] == tile) {
+									if (BE_MAT[h+1][w-1] == true) {
 										neighbors++; //BL
 									}
-									if (BE_MAT[h+1][w] == tile) {
+									if (BE_MAT[h+1][w] == true) {
 										neighbors++; //B
 									}
-									if (BE_MAT[h+1][0] == tile) {
+									if (BE_MAT[h+1][0] == true) {
 										neighbors++; // BR
 									}
 									break;
 								case 3:
-									
-									if (BE_MAT[h-1][w-1] == tile) {
+									if (BE_MAT[h-1][w-1] == true) {
 										neighbors++; //TL
 									}
-									if (BE_MAT[h-1][w] == tile) {
+									if (BE_MAT[h-1][w] == true) {
 										neighbors++; // T
 									}
-									if (BE_MAT[h-1][w+1] == tile) {
+									if (BE_MAT[h-1][w+1] == true) {
 										neighbors++; //TR
 									}
-									if (BE_MAT[h][w-1] == tile) {
+									if (BE_MAT[h][w-1] == true) {
 										neighbors++; //L
 									}
-									if (BE_MAT[h][w+1] == tile) {
+									if (BE_MAT[h][w+1] == true) {
 										neighbors++; //R
 									}
-
-
-									if (BE_MAT[0][w-1] == tile) {
+									if (BE_MAT[0][w-1] == true) {
 										neighbors++; //BL
 									}
-									if (BE_MAT[0][w] == tile) {
+									if (BE_MAT[0][w] == true) {
 										neighbors++; //B
 									}
-									if (BE_MAT[0][w+1] == tile) {
+									if (BE_MAT[0][w+1] == true) {
 										neighbors++; // BR
 									}
 									break;
 								case 4:
-									if (BE_MAT[h-1][WIDTH-1] == tile) {
+									if (BE_MAT[h-1][WIDTH-1] == true) {
 										neighbors++; //TL
 									}
-									if (BE_MAT[h-1][w] == tile) {
+									if (BE_MAT[h-1][w] == true) {
 										neighbors++; // T
 									}
-									if (BE_MAT[h-1][w+1] == tile) {
+									if (BE_MAT[h-1][w+1] == true) {
 										neighbors++; //TR
 									}
-									if (BE_MAT[h][WIDTH-1] == tile) {
+									if (BE_MAT[h][WIDTH-1] == true) {
 										neighbors++; //L
 									}
-									if (BE_MAT[h][w+1] == tile) {
+									if (BE_MAT[h][w+1] == true) {
 										neighbors++; //R
 									}
-									if (BE_MAT[h+1][WIDTH-1] == tile) {
+									if (BE_MAT[h+1][WIDTH-1] == true) {
 										neighbors++; //BL
 									}
-									if (BE_MAT[h+1][w] == tile) {
+									if (BE_MAT[h+1][w] == true) {
 										neighbors++; //B
 									}
-									if (BE_MAT[h+1][w+1] == tile) {
+									if (BE_MAT[h+1][w+1] == true) {
 										neighbors++; // BR
 									}
 									break;
 							}
 						}
 						else {
-							if (BE_MAT[h-1][w-1] == tile) {
+							if (BE_MAT[h-1][w-1] == true) {
 								neighbors++; //TL
 							}
-							if (BE_MAT[h-1][w] == tile) {
+							if (BE_MAT[h-1][w] == true) {
 								neighbors++; // T
 							}
-							if (BE_MAT[h-1][w+1] == tile) {
+							if (BE_MAT[h-1][w+1] == true) {
 								neighbors++; //TR
 							}
-							if (BE_MAT[h][w-1] == tile) {
+							if (BE_MAT[h][w-1] == true) {
 								neighbors++; //L
 							}
-							if (BE_MAT[h][w+1] == tile) {
+							if (BE_MAT[h][w+1] == true) {
 								neighbors++; //R
 							}
-							if (BE_MAT[h+1][w-1] == tile) {
+							if (BE_MAT[h+1][w-1] == true) {
 								neighbors++; //BL
 							}
-							if (BE_MAT[h+1][w] == tile) {
+							if (BE_MAT[h+1][w] == true) {
 								neighbors++; //B
 							}
-							if (BE_MAT[h+1][w+1] == tile) {
+							if (BE_MAT[h+1][w+1] == true) {
 								neighbors++; // BR
 							}
 						}
-						
 						if (alive) {
 							if (neighbors < 2) {
-								FE_MAT[h][w] = "  ";
+								FE_MAT[h][w] = false;
 							}
 							else if (neighbors > 3) {
-								FE_MAT[h][w] = "  ";
+								FE_MAT[h][w] = false;
 							}
 						}
 						else {
 							if (neighbors == 3) {
-								FE_MAT[h][w] = tile;
+								FE_MAT[h][w] = true;
 							}
 						}
 					}
@@ -771,7 +754,7 @@ int main() {
 						if (BE_MAT[h][w] != FE_MAT[h][w]) {
 							stable = false;
 						}
-						if (FE_MAT[h][w] == tile) {
+						if (FE_MAT[h][w] == true) {
 							cout << "\033[37;47m  \033[0m";
 						}
 						else {
@@ -791,121 +774,120 @@ int main() {
 					
 					system("stty raw"); 
 					charIn = getchar();
-					key = (int)charIn;
 					system("stty cooked");
 
-					if (key == 101) {
+					if ((int)charIn == 101) {
 						edit = true;
 						advance = true;
 					}
-					else if (key == 32) {
+					else if ((int)charIn == 32) {
 						advance = true;
 					}
-					else if (key == 9) {
+					else if ((int)charIn == 9) {
 						advance = true;
 					}
 				}
 				while (advance == false);
 			}
-			while(edit == false && key != 9);
+			while(edit == false && (int)charIn != 9);
 		}
-		while(key != 9);
+		while((int)charIn != 9);
 	}
 	return 0;
 }
-void glider(string a[][WIDTH], int w, int h) {
+void glider(bool a[][WIDTH], int w, int h) {
 	if (w < WIDTH - 1 && w > 0 && h < HEIGHT - 1 && h > 0) {
-		a[h-1][w] = tile;
-		a[h][w-1] = tile;
-		a[h+1][w-1] = tile;
-		a[h+1][w] = tile;
-		a[h+1][w+1] = tile;
+		a[h-1][w] = true;
+		a[h][w-1] = true;
+		a[h+1][w-1] = true;
+		a[h+1][w] = true;
+		a[h+1][w+1] = true;
 	}
 }
-void ship1(string a[][WIDTH], int w, int h) {
+void ship1(bool a[][WIDTH], int w, int h) {
 	if (w < WIDTH - 2 && w > 1 && h < HEIGHT - 2 && h > 0) {
-		a[h-1][w] = tile;
-		a[h-1][w+1] = tile;
-		a[h][w-2] = tile;
-		a[h][w-1] = tile;
-		a[h][w+1] = tile;
-		a[h][w+2] = tile;
-		a[h+1][w-2] = tile;
-		a[h+1][w-1] = tile;
-		a[h+1][w] = tile;
-		a[h+1][w+1] = tile;
-		a[h+2][w-1] = tile;
-		a[h+2][w] = tile;
+		a[h-1][w] = true;
+		a[h-1][w+1] = true;
+		a[h][w-2] = true;
+		a[h][w-1] = true;
+		a[h][w+1] = true;
+		a[h][w+2] = true;
+		a[h+1][w-2] = true;
+		a[h+1][w-1] = true;
+		a[h+1][w] = true;
+		a[h+1][w+1] = true;
+		a[h+2][w-1] = true;
+		a[h+2][w] = true;
 	}
 }
-void ship2(string a[][WIDTH], int w, int h) {
+void ship2(bool a[][WIDTH], int w, int h) {
 	if (w < WIDTH - 2 && w > 2 && h < HEIGHT - 2 && h > 0) {
-		a[h-1][w] = tile;
-		a[h-1][w+1] = tile;
-		a[h][w-3] = tile;
-		a[h][w-2] = tile;
-		a[h][w-1] = tile;
-		a[h][w+1] = tile;
-		a[h][w+2] = tile;
-		a[h+1][w-3] = tile;
-		a[h+1][w-2] = tile;
-		a[h+1][w-1] = tile;
-		a[h+1][w] = tile;
-		a[h+1][w+1] = tile;
-		a[h+2][w-2] = tile;
-		a[h+2][w-1] = tile;
-		a[h+2][w] = tile;
+		a[h-1][w] = true;
+		a[h-1][w+1] = true;
+		a[h][w-3] = true;
+		a[h][w-2] = true;
+		a[h][w-1] = true;
+		a[h][w+1] = true;
+		a[h][w+2] = true;
+		a[h+1][w-3] = true;
+		a[h+1][w-2] = true;
+		a[h+1][w-1] = true;
+		a[h+1][w] = true;
+		a[h+1][w+1] = true;
+		a[h+2][w-2] = true;
+		a[h+2][w-1] = true;
+		a[h+2][w] = true;
 	}
 }
-void galaxy(string a[][WIDTH], int w, int h) {
+void galaxy(bool a[][WIDTH], int w, int h) {
 	if (w < WIDTH - 4 && w > 3 && h < HEIGHT - 4 && h > 3) {
-		a[h-4][w-4] = tile;
-		a[h-4][w-3] = tile;
-		a[h-4][w-2] = tile;
-		a[h-4][w-1] = tile;
-		a[h-4][w] = tile;
-		a[h-4][w+1] = tile;
-		a[h-4][w+3] = tile;
-		a[h-4][w+4] = tile;
-		a[h-3][w-4] = tile;
-		a[h-3][w-3] = tile;
-		a[h-3][w-2] = tile;
-		a[h-3][w-1] = tile;
-		a[h-3][w] = tile;
-		a[h-3][w+1] = tile;
-		a[h-3][w+3] = tile;
-		a[h-3][w+4] = tile;
-		a[h-2][w+3] = tile;
-		a[h-2][w+4] = tile;
-		a[h-1][w-4] = tile;
-		a[h-1][w-3] = tile;
-		a[h-1][w+3] = tile;
-		a[h-1][w+4] = tile;
-		a[h][w-4] = tile;
-		a[h][w-3] = tile;
-		a[h][w+3] = tile;
-		a[h][w+4] = tile;
-		a[h+1][w-4] = tile;
-		a[h+1][w-3] = tile;
-		a[h+1][w+3] = tile;
-		a[h+1][w+4] = tile;
-		a[h+2][w-4] = tile;
-		a[h+2][w-3] = tile;
-		a[h+3][w-4] = tile;
-		a[h+3][w-3] = tile;
-		a[h+3][w-1] = tile;
-		a[h+3][w] = tile;
-		a[h+3][w+1] = tile;
-		a[h+3][w+2] = tile;
-		a[h+3][w+3] = tile;
-		a[h+3][w+4] = tile;
-		a[h+4][w-4] = tile;
-		a[h+4][w-3] = tile;
-		a[h+4][w-1] = tile;
-		a[h+4][w] = tile;
-		a[h+4][w+1] = tile;
-		a[h+4][w+2] = tile;
-		a[h+4][w+3] = tile;
-		a[h+4][w+4] = tile;
+		a[h-4][w-4] = true;
+		a[h-4][w-3] = true;
+		a[h-4][w-2] = true;
+		a[h-4][w-1] = true;
+		a[h-4][w] = true;
+		a[h-4][w+1] = true;
+		a[h-4][w+3] = true;
+		a[h-4][w+4] = true;
+		a[h-3][w-4] = true;
+		a[h-3][w-3] = true;
+		a[h-3][w-2] = true;
+		a[h-3][w-1] = true;
+		a[h-3][w] = true;
+		a[h-3][w+1] = true;
+		a[h-3][w+3] = true;
+		a[h-3][w+4] = true;
+		a[h-2][w+3] = true;
+		a[h-2][w+4] = true;
+		a[h-1][w-4] = true;
+		a[h-1][w-3] = true;
+		a[h-1][w+3] = true;
+		a[h-1][w+4] = true;
+		a[h][w-4] = true;
+		a[h][w-3] = true;
+		a[h][w+3] = true;
+		a[h][w+4] = true;
+		a[h+1][w-4] = true;
+		a[h+1][w-3] = true;
+		a[h+1][w+3] = true;
+		a[h+1][w+4] = true;
+		a[h+2][w-4] = true;
+		a[h+2][w-3] = true;
+		a[h+3][w-4] = true;
+		a[h+3][w-3] = true;
+		a[h+3][w-1] = true;
+		a[h+3][w] = true;
+		a[h+3][w+1] = true;
+		a[h+3][w+2] = true;
+		a[h+3][w+3] = true;
+		a[h+3][w+4] = true;
+		a[h+4][w-4] = true;
+		a[h+4][w-3] = true;
+		a[h+4][w-1] = true;
+		a[h+4][w] = true;
+		a[h+4][w+1] = true;
+		a[h+4][w+2] = true;
+		a[h+4][w+3] = true;
+		a[h+4][w+4] = true;
 	}
 }
