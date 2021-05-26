@@ -21,13 +21,13 @@ void galaxy(string a[][WIDTH], int w, int h);
 
 int main() {
 	int cursorColor = 2;
-
+	int edge, corner;
 	int key = -1;
 	char charIn;
 	int neighbors = 0;
 	bool alive = false;
 	bool stable = true;
-	bool edit, progress, advance;
+	bool edit, progress, advance, toroidal;
 	int cursorX = (WIDTH/2) -1;
 	int cursorY = (HEIGHT/2) -1;
 
@@ -190,43 +190,118 @@ int main() {
 			}
 		}
 		edit = false;
-
 		do {
 			for (int h = 0; h < HEIGHT; h++)  {
 				for (int w = 0; w < WIDTH; w++) {
 					BE_MAT[h+1][w+1] = FE_MAT[h][w];
 				}
 			}
-			for (int h = 1; h < HEIGHT + 2; h++)  {
-				for (int w = 1; w < WIDTH + 2; w++) {
+			for (int h = 1; h < HEIGHT + 1; h++)  {
+				for (int w = 1; w < WIDTH + 1; w++) {
 					neighbors = 0;
 					alive = false;
-					if (BE_MAT[h][w] == tile) {
-						alive = true;
+					corner = 0;
+					edge = 0;
+					toroidal = true;
+					
+					if (toroidal) {
+						if (h == 1 && w == WIDTH) {
+							corner = 1;
+						}
+						else if (h == HEIGHT && w == WIDTH) {
+							corner = 2;
+						}
+						else if (h == HEIGHT && w == 1) {
+							corner = 3;
+						}
+						else if (w == 1 && h == 1) {
+							corner = 4;
+						}
+						
+						else if (h == 1) {
+							edge = 1; //Top edge
+						}
+						else if (w == WIDTH) {
+							edge = 2; //Right edge
+						}
+						else if (h == HEIGHT) {
+							edge = 3; //Bottom edge
+						}
+						else if (w == 1) {
+							edge = 4; //Left edge
+						}
+						if (BE_MAT[h][w] == tile) {
+							alive = true;
+						}
 					}
-					if (BE_MAT[h-1][w-1] == tile) {
-						neighbors++;
+
+					if (corner > 0) {
+						switch(corner) {
+							case 1:
+
+							case 2:
+							case 3:
+							case 4:
+								if (BE_MAT[h-1][w-1] == tile) {
+									neighbors++; //TL
+								}
+								if (BE_MAT[h-1][w] == tile) {
+									neighbors++; // T
+								}
+								if (BE_MAT[h-1][w+1] == tile) {
+									neighbors++; //TR
+								}
+								if (BE_MAT[h][w-1] == tile) {
+									neighbors++; //L
+								}
+								if (BE_MAT[h][w+1] == tile) {
+									neighbors++; //R
+								}
+								if (BE_MAT[h+1][w-1] == tile) {
+									neighbors++; //BL
+								}
+								if (BE_MAT[h+1][w] == tile) {
+									neighbors++; //B
+								}
+								if (BE_MAT[h+1][w+1] == tile) {
+									neighbors++; // BR
+								}
+								break;
+						}
 					}
-					if (BE_MAT[h-1][w] == tile) {
-						neighbors++;
+					else if (edge > 0) {
+						switch(edge) {
+							case 1:
+							case 2:
+							case 3:
+							case 4:
+						}
 					}
-					if (BE_MAT[h-1][w+1] == tile) {
-						neighbors++;
-					}
-					if (BE_MAT[h][w-1] == tile) {
-						neighbors++;
-					}
-					if (BE_MAT[h][w+1] == tile) {
-						neighbors++;
-					}
-					if (BE_MAT[h+1][w-1] == tile) {
-						neighbors++;
-					}
-					if (BE_MAT[h+1][w] == tile) {
-						neighbors++;
-					}
-					if (BE_MAT[h+1][w+1] == tile) {
-						neighbors++;
+					else {
+						if (BE_MAT[h-1][w-1] == tile) {
+							neighbors++; //TL
+						}
+						if (BE_MAT[h-1][w] == tile) {
+							neighbors++; // T
+						}
+						if (BE_MAT[h-1][w+1] == tile) {
+							neighbors++; //TR
+						}
+						if (BE_MAT[h][w-1] == tile) {
+							neighbors++; //L
+						}
+						if (BE_MAT[h][w+1] == tile) {
+							neighbors++; //R
+						}
+						if (BE_MAT[h+1][w-1] == tile) {
+							neighbors++; //BL
+						}
+						if (BE_MAT[h+1][w] == tile) {
+							neighbors++; //B
+						}
+						if (BE_MAT[h+1][w+1] == tile) {
+							neighbors++; // BR
+						}
 					}
 					if (h < HEIGHT + 1 && w < WIDTH + 1) {
 						if (alive) {
@@ -266,6 +341,7 @@ int main() {
 			if (stable) {
 				return 0;
 			}
+			cout << BE_MAT[0][0] << endl;
 			cout << "Hold Space to advance" <<endl;
 			cout << "Press E to edit" <<endl;
 			cout << "Press Tab to quit" <<endl;
