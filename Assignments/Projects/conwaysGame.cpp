@@ -7,8 +7,8 @@ using namespace std;
 #define clear system("clear");
 
 //Matrix height and width
-const int WIDTH = 20;
-const int HEIGHT = 20;
+const int WIDTH = 30;
+const int HEIGHT = 30;
 
 //Preset/Precoded patterns that the user can add while editing
 void glider(bool a[][WIDTH], int w, int h);
@@ -234,7 +234,7 @@ int main() {
 							neighbors++; //TL
 						}
 						if (BE_MAT[h-1][w] == true) {
-							neighbors++; // T
+							neighbors++; //T
 						}
 						if (BE_MAT[h-1][w+1] == true) {
 							neighbors++; //TR
@@ -252,7 +252,7 @@ int main() {
 							neighbors++; //B
 						}
 						if (BE_MAT[h+1][w+1] == true) {
-							neighbors++; // BR
+							neighbors++; //BR
 						}
 						if (BE_MAT[h][w] == true) { //If cell is alive
 							if (neighbors < 2) { //If 1 neighbor
@@ -328,7 +328,7 @@ int main() {
 				FE_MAT[h][w] = false;
 			}
 		}
-		//Lines 332 - 478 are the same as the non-wrapping code
+		//Lines 331 - 478 are the same as the non-wrapping code
 		do {
 			if (edit) {
 				do {
@@ -482,23 +482,23 @@ int main() {
 						BE_MAT[h][w] = FE_MAT[h][w]; //Set backend mat to same as front end
 					}
 				}
+				//For each cell
 				for (int h = 0; h < HEIGHT; h++)  {
 					for (int w = 0; w < WIDTH; w++) {
-						neighbors = 0;
-						corner = 0;
-						edge = 0;
-	
+						neighbors = 0; //Reset neighbor count
+						corner = 0; //Reset corner type
+						edge = 0; //Reset edge type
 						if (h == 0 && w == WIDTH-1) {
-							corner = 1;
+							corner = 1; //TR Corner
 						}
 						else if (h == HEIGHT-1 && w == WIDTH-1) {
-							corner = 2;
+							corner = 2; //BR Corner
 						}
 						else if (h == HEIGHT-1 && w == 0) {
-							corner = 3;
+							corner = 3; //BL Corner
 						}
 						else if (w == 0 && h == 0) {
-							corner = 4;
+							corner = 4; //TL Corner
 						}
 						//Check if current index is on an edge
 						else if (h == 0) {
@@ -513,32 +513,32 @@ int main() {
 						else if (w == 0) {
 							edge = 4; //Left edge
 						}
-						if (corner > 0) {
+						if (corner > 0) { //If current cell IS a corner
 							switch(corner) {
-								case 1:
-									if (BE_MAT[HEIGHT-1][WIDTH-2] == true) {
-										neighbors++; //TL
+								case 1: //TR Corner
+									if (BE_MAT[HEIGHT-1][WIDTH-2] == true) { 
+										neighbors++; //TL tile relative to corner cell checks opposite side of matrix
 									}
 									if (BE_MAT[HEIGHT-1][WIDTH-1] == true) {
-										neighbors++; // T
+										neighbors++; //Top
 									}
 									if (BE_MAT[HEIGHT-1][0] == true) {
 										neighbors++; //TR
 									}
 									if (BE_MAT[0][WIDTH-2] == true) {
-										neighbors++; //L
+										neighbors++; //Left
 									}
 									if (BE_MAT[0][0] == true) {
-										neighbors++; //R
+										neighbors++; //Right
 									}
 									if (BE_MAT[1][WIDTH-2] == true) {
 										neighbors++; //BL
 									}
 									if (BE_MAT[1][WIDTH-1] == true) {
-										neighbors++; //B
+										neighbors++; //Bottom
 									}
 									if (BE_MAT[1][0] == true) {
-										neighbors++; // BR
+										neighbors++; //BR
 									}
 									break;
 								case 2:
@@ -546,7 +546,7 @@ int main() {
 										neighbors++; //TL
 									}
 									if (BE_MAT[HEIGHT-2][WIDTH-1] == true) {
-										neighbors++; // T
+										neighbors++; //T
 									}
 									if (BE_MAT[HEIGHT-2][0] == true) {
 										neighbors++; //TR
@@ -564,7 +564,7 @@ int main() {
 										neighbors++; //B
 									}
 									if (BE_MAT[0][0] == true) {
-										neighbors++; // BR
+										neighbors++; //BR
 									}
 									break;
 								case 3:
@@ -572,7 +572,7 @@ int main() {
 										neighbors++; //TL
 									}
 									if (BE_MAT[HEIGHT-2][0] == true) {
-										neighbors++; // T
+										neighbors++; //T
 									}
 									if (BE_MAT[HEIGHT-2][1] == true) {
 										neighbors++; //TR
@@ -590,7 +590,7 @@ int main() {
 										neighbors++; //B
 									}
 									if (BE_MAT[0][1] == true) {
-										neighbors++; // BR
+										neighbors++; //BR
 									}
 									break;
 								case 4:
@@ -598,7 +598,7 @@ int main() {
 										neighbors++; //TL
 									}
 									if (BE_MAT[HEIGHT-1][0] == true) {
-										neighbors++; // T
+										neighbors++; //T
 									}
 									if (BE_MAT[HEIGHT-1][1] == true) {
 										neighbors++; //TR
@@ -616,7 +616,7 @@ int main() {
 										neighbors++; //B
 									}
 									if (BE_MAT[h+1][w+1] == true) {
-										neighbors++; // BR
+										neighbors++; //BR
 									}
 									break;
 							}
@@ -628,7 +628,7 @@ int main() {
 										neighbors++; //TL
 									}
 									if (BE_MAT[HEIGHT-1][w] == true) {
-										neighbors++; // T
+										neighbors++; //T
 									}
 									if (BE_MAT[HEIGHT-1][w+1] == true) {
 										neighbors++; //TR
@@ -646,7 +646,7 @@ int main() {
 										neighbors++; //B
 									}
 									if (BE_MAT[h+1][w+1] == true) {
-										neighbors++; // BR
+										neighbors++; //BR
 									}
 									break;
 								case 2:
@@ -654,7 +654,7 @@ int main() {
 										neighbors++; //TL
 									}
 									if (BE_MAT[h-1][w] == true) {
-										neighbors++; // T
+										neighbors++; //T
 									}
 									if (BE_MAT[h-1][0] == true) {
 										neighbors++; //TR
@@ -672,7 +672,7 @@ int main() {
 										neighbors++; //B
 									}
 									if (BE_MAT[h+1][0] == true) {
-										neighbors++; // BR
+										neighbors++; //BR
 									}
 									break;
 								case 3:
@@ -680,7 +680,7 @@ int main() {
 										neighbors++; //TL
 									}
 									if (BE_MAT[h-1][w] == true) {
-										neighbors++; // T
+										neighbors++; //T
 									}
 									if (BE_MAT[h-1][w+1] == true) {
 										neighbors++; //TR
@@ -698,7 +698,7 @@ int main() {
 										neighbors++; //B
 									}
 									if (BE_MAT[0][w+1] == true) {
-										neighbors++; // BR
+										neighbors++; //BR
 									}
 									break;
 								case 4:
@@ -706,7 +706,7 @@ int main() {
 										neighbors++; //TL
 									}
 									if (BE_MAT[h-1][w] == true) {
-										neighbors++; // T
+										neighbors++; //T
 									}
 									if (BE_MAT[h-1][w+1] == true) {
 										neighbors++; //TR
@@ -724,7 +724,7 @@ int main() {
 										neighbors++; //B
 									}
 									if (BE_MAT[h+1][w+1] == true) {
-										neighbors++; // BR
+										neighbors++; //BR
 									}
 									break;
 							}
@@ -734,7 +734,7 @@ int main() {
 								neighbors++; //TL
 							}
 							if (BE_MAT[h-1][w] == true) {
-								neighbors++; // T
+								neighbors++; //T
 							}
 							if (BE_MAT[h-1][w+1] == true) {
 								neighbors++; //TR
@@ -752,7 +752,7 @@ int main() {
 								neighbors++; //B
 							}
 							if (BE_MAT[h+1][w+1] == true) {
-								neighbors++; // BR
+								neighbors++; //BR
 							}
 						}
 						if (BE_MAT[h][w] == true) {
@@ -795,7 +795,6 @@ int main() {
 				cout << "Press Tab to quit" <<endl;
 				do {
 					advance = false;
-					
 					system("stty raw"); 
 					charIn = getchar();
 					system("stty cooked");
@@ -804,10 +803,7 @@ int main() {
 						edit = true;
 						advance = true;
 					}
-					else if ((int)charIn == 32) {
-						advance = true;
-					}
-					else if ((int)charIn == 9) {
+					else if ((int)charIn == 32 || (int)charIn == 9) {
 						advance = true;
 					}
 				}
