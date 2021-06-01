@@ -25,9 +25,6 @@ int main() {
 	cin >> Frosh2.name; //Dot notation
 
 	setStruct("Enter GPA of f1", student, GPA);
-
-
-
 	return 0;
 }
 //function definitions
@@ -55,6 +52,4 @@ struct name {
 
 Accessing vars in func:
 -create a struct (using .(dot) notation to get the variable)
-
-
 */
