@@ -9,7 +9,7 @@ using namespace std;
 long toNum(string s);
 int main() {
 	string text;
-	ifstream list("perms2.txt");
+	ifstream list("perms.txt");
 	char charIn;
 	long listArray[200];
 	for (int i = 0; i < 200; i++) {
@@ -118,6 +118,9 @@ int main() {
 				case 68: //LEFT
 					if (index > 0) {
 						index--;
+					}
+					else {
+						index = listL - 1;
 					}
 					break;
 				case 67: //RIGHT

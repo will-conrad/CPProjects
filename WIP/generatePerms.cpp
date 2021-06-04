@@ -26,7 +26,7 @@ int main() {
 	srand(time(NULL));
 	ofstream fileOut;
 	fileOut.open ("perms2.txt");	
-	while (clock < 20000000) {
+	while (clock < 500000000) {
 		clock++;
 		for (int h = 0; h < 7; h++) {
 			for (int w = 0; w < 7; w++) {
@@ -35,7 +35,7 @@ int main() {
 		}
 		cursorX = 0;
 		cursorY = 6;
-		up = 0;
+		up = 0; 
 		right = 0;
 		intCode = 0;
 		//Generate number
@@ -43,8 +43,8 @@ int main() {
 			codeArr[i] = 0;
 			lttrArr[i] = ' ';
 		}
-		length = 0;
-		
+		length = 14;
+		/*
 		switch(rand()%6) {
 			case 0:
 				length = 8;
@@ -62,6 +62,7 @@ int main() {
 				length = 6;
 				break;
 		}
+		*/
 		for (int i = 0; i < length; i++) {
 			codeArr[i] = rand()%4 + 1;
 			intCode = 10 * intCode + codeArr[i]; 
