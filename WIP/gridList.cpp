@@ -5,21 +5,27 @@
 using namespace std;
 #define enter cout << endl;
 #define clear system("clear");
+#define test cout<<"X"<<endl;
 long toNum(string s);
 int main() {
 	string text;
-	ifstream list("perms.txt");
+	ifstream list("perms2.txt");
 	char charIn;
 	long listArray[200];
+	for (int i = 0; i < 200; i++) {
+		listArray[i] = 0;
+	}
 	bool next;
 	int listL = 0;
 	long code; 
 	int size, cursorX = 0, cursorY = 6, index = 0;
+	test;
 	while (getline(list, text)) {
 		listArray[listL] = toNum(text);
 		listL++;
 	}
 	enter;
+	test;
 	//Sorting
 	int j = 0;
 	for(int i = 1; i < listL; i++) { 
@@ -30,10 +36,11 @@ int main() {
 		}
 	}
 	list.close();
+	test;
 	//SORTED CODES ON listArray[]
 	bool grid[7][7];
 	int codeArr[20];
-	long number;
+	long number = 0;
 	
 	while (true) {
 		cursorX = 0;
@@ -50,16 +57,18 @@ int main() {
 		grid[0][6] = true;
 
 		number = listArray[index];
+		cout << number<<endl;
 		//Print
 		//need size, number from listArray to array
 		size = trunc(log10(number)) + 1;
+		cout << "size" << size << endl;
 		
 		for (int i = size - 1; i >= 0; i--) {
 		    codeArr[i] = number % 10;
 		    number /= 10;
 		}
 		clear;
-		cout << "Index: " << index <<endl;
+		cout << "Index:" << index <<endl;
 		cout << "Size: " << size <<endl;
 		cout << "Code: " << listArray[index] <<endl;
 		for (int i = 0; i < size; i++) {
